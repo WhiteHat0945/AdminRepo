@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELITES | Official Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #ffffff; --text: #1a1a1a; --muted: #757575; --accent: #000000; --border: #eeeeee; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        
+        /* CONNECTION HUD */
+        #statusHUD { 
+            background: #1a1a1a; color: #00ffcc; padding: 0.8rem 1.5rem; 
+            font-family: monospace; font-size: 0.75rem; border-bottom: 2px solid #333;
+            position: sticky; top: 0; z-index: 10001;
+        }
+
+        /* HEADER & NAV */
+        #announcementBar { background: var(--accent); color: #fff; text-align: center; padding: 0.6rem; font-size: 0.75rem; display: none; text-transform: uppercase; letter-spacing: 1px; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 4rem; border-bottom: 1px solid var(--border); background: #fff; }
+        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: -1px; cursor: pointer; }
+        .nav-links { display: flex; gap: 2rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* RESTORED HERO SECTION */
+        #heroSection { 
+            height: 75vh; 
+            background-color: #f5f5f5; 
+            background-size: cover; 
+            background-position: center; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            color: #fff; 
+        }
+        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; padding: 2rem; }
+        #heroTitle { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 600; margin-bottom: 1rem; letter-spacing: -2px; line-height: 1; }
+        #heroSub { font-size: 1.1rem; font-weight: 300; margin-bottom: 2.5rem; opacity: 0.9; }
+        .btn-shop { background: #fff; color: #000; padding: 1.2rem 3rem; border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: none; }
+
+        /* PRODUCT GRID - Optimized for "Nice Fit" */
+        .collection { padding: 5rem 4rem; max-width: 1500px; margin: 0 auto; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 4rem 2rem; 
+        }
+        .product-card { cursor: pointer; }
+        .image-box { 
+            width: 100%; 
+            aspect-ratio: 3 / 4; /* Standard fashion photography ratio */
+            background: #f9f9f9; 
+            margin-bottom: 1.2rem; 
+            overflow: hidden; 
+            border-radius: 2px;
+        }
+        .image-box img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* This prevents stretching/distortion */
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .product-card:hover img { transform: scale(1.05); }
+        .product-info { display: flex; justify-content: space-between; align-items: flex-start; }
+        .p-name { font-weight: 600; font-size: 1rem; color: var(--text); }
+        .p-price { font-size: 1rem; color: var(--text); font-weight: 400; }
+        .p-cat { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; display: block; }
+
+        /* DETAIL MODAL */
+        #productModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; display: none; overflow-y: auto; padding: 4rem; }
+        .modal-close { position: fixed; top: 2rem; right: 4rem; font-size: 2.5rem; cursor: pointer; z-index: 10001; }
+        .modal-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; max-width: 1300px; margin: 0 auto; }
+        #mainView { width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #f9f9f9; }
+        .thumb-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
+        .thumb-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer; border: 1px solid transparent; }
+        .thumb-strip img:hover { border-color: #000; }
+        .detail-name { font-size: 3rem; font-weight: 600; margin-bottom: 1rem; letter-spacing: -2px; }
+        .detail-price { font-size: 1.5rem; margin-bottom: 2rem; font-weight: 300; }
+        .detail-desc { font-size: 1rem; line-height: 1.7; color: #333; margin-bottom: 3rem; }
+        .chip-box { display: flex; gap: 10px; margin-bottom: 2.5rem; flex-wrap: wrap; }
+        .chip-item { border: 1px solid #ddd; padding: 10px 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .chip-item:hover { border-color: #000; }
+        .color-dot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; }
+        .btn-buy { width: 100%; background: #000; color: #fff; padding: 1.5rem; border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
+
+        @media (max-width: 900px) {
+            .modal-container { grid-template-columns: 1fr; }
+            #productModal { padding: 2rem; padding-top: 6rem; }
+            .modal-close { right: 2rem; top: 1.5rem; }
+            nav { padding: 1rem 2rem; }
+            .collection { padding: 3rem 2rem; }
+            #heroTitle { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="statusHUD">> SYSTEM BOOTING: Re-establishing Cloud Sync...</div>
+
+    <div id="announcementBar"></div>
+
+    <nav>
+        <div class="logo" onclick="location.reload()">ELITES</div>
+        <div class="nav-links">
+            <span>Shop</span>
+            <span style="font-weight: 600;">Bag (0)</span>
+        </div>
+    </nav>
+
+    <div id="heroSection">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 id="heroTitle">Connecting...</h1>
+            <p id="heroSub">Fetching the latest collection from ELITES.</p>
+            <button class="btn-shop" id="heroBtn" onclick="document.querySelector('.collection').scrollIntoView({behavior:'smooth'})">Explore Now</button>
+        </div>
+    </div>
+
+    <div class="collection">
+        <h2 style="font-weight: 400; margin-bottom: 4rem; letter-spacing: -1px; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 3px;">New Season Arrivals</h2>
+        <div class="grid" id="productGrid">
+            <p style="color: #888;">Updating catalog...</p>
+        </div>
+    </div>
+
+    <div id="productModal">
+        <div class="modal-close" onclick="closeModal()">×</div>
+        <div class="modal-container">
+            <div>
+                <img id="mainView" src="">
+                <div class="thumb-strip" id="thumbStrip"></div>
+            </div>
+            <div style="padding-top: 1rem;">
+                <div id="dCat" style="font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;"></div>
+                <h1 class="detail-name" id="dName"></h1>
+                <div class="detail-price" id="dPrice"></div>
+                <p class="detail-desc" id="dDesc"></p>
+
+                <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 1rem;">Available Sizes</span>
+                <div class="chip-box" id="dSizes"></div>
+
+                <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 1rem;">Colors</span>
+                <div class="chip-box" id="dColors"></div>
+
+                <button class="btn-buy">Add to Bag</button>
+                <p id="dStock" style="font-size: 0.8rem; margin-top: 1.5rem; color: #27ae60;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <script>
+        const hud = document.getElementById('statusHUD');
+        const supabaseUrl = 'https://mckfmkzcrpwnypxgqsuj.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ja2Zta3pjcnB3bnlweGdxc3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTUyOTYsImV4cCI6MjA5MjA3MTI5Nn0.pRc3Bf8pPu3JDIkMdXjbILVUHYn7Z34OqRxjnnjxigE'; 
+        
+        let productsList = [];
+
+        async function startStore() {
+            try {
+                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                hud.innerText = "> Syncing with mckfmkzcrpwnypxgqsuj... Fetching CMS & Inventory.";
+
+                // 1. Fetch CMS (Hero & Announcement)
+                const { data: cms } = await supabase.from('cms').select('*').eq('id', 1).single();
+                if (cms) {
+                    if (cms.announcement_active) {
+                        document.getElementById('announcementBar').innerText = cms.announcement_text;
+                        document.getElementById('announcementBar').style.display = 'block';
+                    }
+                    document.getElementById('heroTitle').innerText = cms.hero_title || "Welcome to ELITES";
+                    document.getElementById('heroSub').innerText = cms.hero_sub || "Elevated essentials for the modern professional.";
+                    document.getElementById('heroBtn').innerText = cms.hero_btn || "Shop Collection";
+                    document.getElementById('heroBtn').style.display = 'inline-block';
+                    if (cms.hero_image_url) {
+                        document.getElementById('heroSection').style.backgroundImage = `url('${cms.hero_image_url}')`;
+                    }
+                }
+
+                // 2. Fetch Products
+                const { data: prods, error: pError } = await supabase.from('products').select('*').order('id', { ascending: false });
+                
+                if (pError) {
+                    hud.innerHTML = `<span class="error-text">> CONNECTION ERROR: ${pError.message}</span>`;
+                } else {
+                    productsList = prods;
+                    renderProducts();
+                    hud.innerText = `> SYSTEM LIVE: Found ${prods.length} products. 🟢`;
+                }
+
+            } catch (err) {
+                hud.innerHTML = `<span class="error-text">> CRITICAL ERROR: ${err.message}</span>`;
+            }
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            productsList.forEach((p, index) => {
+                grid.innerHTML += `
+                    <div class="product-card" onclick="openProduct(${index})">
+                        <div class="image-box"><img src="${p.thumbnail || 'https://placehold.co/600x800'}"></div>
+                        <div class="product-info">
+                            <div>
+                                <span class="p-name">${p.name}</span>
+                                <span class="p-cat">${p.category}</span>
+                            </div>
+                            <span class="p-price">₱${parseFloat(p.price).toLocaleString()}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openProduct(index) {
+            const p = productsList[index];
+            const modal = document.getElementById('productModal');
+            
+            document.getElementById('dName').innerText = p.name;
+            document.getElementById('dCat').innerText = p.category;
+            document.getElementById('dPrice').innerText = `₱${parseFloat(p.price).toLocaleString()}`;
+            document.getElementById('dDesc').innerText = p.description || "A signature piece from the ELITES collection, emphasizing a minimalistic silhouette and superior fabric quality.";
+            document.getElementById('dStock').innerText = `AVAILABILITY: ${p.stock} UNITS IN STOCK`;
+
+            document.getElementById('mainView').src = p.thumbnail;
+            const thumbStrip = document.getElementById('thumbStrip');
+            thumbStrip.innerHTML = `<img src="${p.thumbnail}" onclick="document.getElementById('mainView').src = this.src">`;
+            
+            if (p.gallery && Array.isArray(p.gallery)) {
+                p.gallery.forEach(img => {
+                    thumbStrip.innerHTML += `<img src="${img}" onclick="document.getElementById('mainView').src = this.src">`;
+                });
+            }
+
+            const sizeBox = document.getElementById('dSizes');
+            sizeBox.innerHTML = '';
+            if(p.sizes) p.sizes.forEach(s => sizeBox.innerHTML += `<div class="chip-item">${s}</div>`);
+
+            const colorBox = document.getElementById('dColors');
+            colorBox.innerHTML = '';
+            const colorMap = { "Black": "#000", "White": "#fff", "Gray": "#808080", "Forest": "#354a21" };
+            if(p.colors) {
+                p.colors.forEach(c => {
+                    colorBox.innerHTML += `<div class="color-dot" style="background: ${colorMap[c] || '#ddd'}" title="${c}"></div>`;
+                });
+            }
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onload = () => setTimeout(startStore, 400);
+    </script>
+</body>
+</html>

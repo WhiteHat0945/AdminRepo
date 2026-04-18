@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        /* Sidebar Navigation */
         aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2rem; display: flex; flex-direction: column; }
         .logo { font-weight: 600; font-size: 1.2rem; margin-bottom: 3rem; letter-spacing: -0.5px; }
         nav ul { list-style: none; }
@@ -27,29 +26,24 @@
         nav li.active { background: #f0f0f0; color: var(--accent); font-weight: 600; }
         nav li:hover { color: var(--accent); }
 
-        /* Main Content Area */
         main { flex: 1; padding: 3rem; overflow-y: auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
         h1 { font-size: 1.5rem; font-weight: 600; }
 
-        /* Metric & CMS Cards */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
         .card { background: #fff; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 1.5rem; }
         .card span { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .card h2 { font-size: 2rem; margin-top: 0.5rem; font-weight: 400; }
 
-        /* Content Sections */
         .view { display: none; }
         .view.active { display: block; }
 
-        /* Tables */
         table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
         th { text-align: left; padding: 1rem; font-size: 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
         td { padding: 1rem; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
         .btn-add { background: var(--accent); color: #fff; padding: 0.7rem 1.5rem; border: none; border-radius: var(--radius); cursor: pointer; font-size: 0.85rem; }
         .empty-state { text-align: center; padding: 3rem !important; color: var(--text-muted); font-style: italic; }
 
-        /* Modal Styles */
         #modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
         .modal { background: #fff; padding: 2.5rem; width: 600px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
         .modal h3 { margin-bottom: 1.5rem; font-weight: 600; }
@@ -59,31 +53,21 @@
         .modal-actions { display: flex; gap: 1rem; margin-top: 2rem; }
         .btn-cancel { background: none; border: none; cursor: pointer; color: var(--text-muted); }
 
-        /* Image Previews & Chips */
         .image-upload-container { border: 2px dashed var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; margin-bottom: 1rem; cursor: pointer; transition: 0.2s; }
         .image-upload-container:hover { border-color: var(--accent); background: #fafafa; }
-        .preview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-top: 1rem; }
         .preview-item { width: 100%; aspect-ratio: 1; background: #eee; border-radius: 4px; object-fit: cover; }
+        
         .chip-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
         .chip { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
         .chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
         .color-circle { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s; }
         .color-circle.selected { transform: scale(1.2); border: 2px solid var(--accent); }
 
-        /* --- LOGIN OVERLAY --- */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); display: flex; justify-content: center; align-items: center;
-            z-index: 9999; /* Forces it to sit on top of everything else */
-        }
-        .login-card {
-            background: #fff; padding: 3rem; width: 400px; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border);
-            text-align: center;
-        }
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-card { background: #fff; padding: 3rem; width: 400px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border); text-align: center; }
         .login-card .form-group { text-align: left; }
 
-        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             aside { width: 100%; height: 70px; flex-direction: row; border-right: none; border-top: 1px solid var(--border); padding: 0; position: fixed; bottom: 0; left: 0; z-index: 100; justify-content: center; align-items: center; }
@@ -100,7 +84,6 @@
             .modal { width: 95%; padding: 1.5rem; }
             .modal h3 { font-size: 1.2rem; }
             form > div[style*="display: flex"] { flex-direction: column; gap: 0 !important; } 
-            .preview-grid { grid-template-columns: repeat(2, 1fr); } 
         }
     </style>
 </head>
@@ -111,22 +94,16 @@
             <h2 style="margin-bottom: 0.5rem; font-weight: 600;">Welcome Back</h2>
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Sign in to ELITES Admin</p>
             <form id="loginForm">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="loginUser" required placeholder="admin_elites">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPass" required placeholder="Enter password">
-                </div>
+                <div class="form-group"><label>Username</label><input type="text" id="loginUser" required placeholder="Enter username"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPass" required placeholder="Enter password"></div>
                 <p id="loginError" style="color: red; font-size: 0.8rem; display: none; margin-bottom: 1rem; text-align: left;">Incorrect username or password.</p>
-                <button type="submit" class="btn-add" style="width: 100%; padding: 1rem; font-size: 1rem;">Sign In</button>
+                <button type="submit" class="btn-add" style="width: 100%; padding: 1rem; font-size: 1rem;" id="loginBtn">Sign In</button>
             </form>
         </div>
     </div>
 
     <aside>
-        <div class="logo">ELITE FORMELLE</div>
+        <div class="logo">ELITES Admin</div>
         <nav>
             <ul>
                 <li class="active" onclick="showView('analytics')">Dashboard</li>
@@ -151,19 +128,13 @@
                 <div class="card"><span>Total Revenue</span><h2 id="stat-sales">₱0.00</h2></div>
             </div>
             <h3>System Status</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;" id="system-status">Awaiting connection to database...</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;" id="system-status">Awaiting connection...</p>
         </div>
 
         <div id="products" class="view">
             <table>
                 <thead>
-                    <tr>
-                        <th>PRODUCT</th>
-                        <th>CATEGORY</th>
-                        <th>PRICE</th>
-                        <th>STOCK</th>
-                        <th>ACTIONS</th>
-                    </tr>
+                    <tr><th>PRODUCT</th><th>CATEGORY</th><th>PRICE</th><th>STOCK</th><th>ACTIONS</th></tr>
                 </thead>
                 <tbody id="productTableBody"></tbody>
             </table>
@@ -202,38 +173,46 @@
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Manage and update customer shipments.</p>
             <table>
                 <thead>
-                    <tr>
-                        <th>ORDER ID</th>
-                        <th>CUSTOMER</th>
-                        <th>ITEMS</th>
-                        <th>DATE</th>
-                        <th>TOTAL</th>
-                        <th>STATUS</th>
-                        <th>ACTION</th>
-                    </tr>
+                    <tr><th>ORDER ID</th><th>CUSTOMER</th><th>ITEMS</th><th>DATE</th><th>TOTAL</th><th>STATUS</th><th>ACTION</th></tr>
                 </thead>
                 <tbody id="orderTableBody"></tbody>
             </table>
         </div>
 
         <div id="settings" class="view">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 900px;">
-                <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Store Profile</h3>
-                    <div class="form-group"><label>Store Name</label><input type="text" value="The ELITES Official Store"></div>
-                    <div class="form-group"><label>Support Email</label><input type="text" value="support@theelites.com"></div>
-                    <div class="form-group">
-                        <label>Default Currency</label>
-                        <select><option>PHP (₱)</option><option>USD ($)</option></select>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px;">
+                <div>
+                    <div class="card">
+                        <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Store Profile</h3>
+                        <div class="form-group"><label>Store Name</label><input type="text" value="The ELITES Official Store"></div>
+                        <div class="form-group"><label>Support Email</label><input type="text" value="support@theelites.com"></div>
+                        <div class="form-group"><label>Default Currency</label><select><option>PHP (₱)</option><option>USD ($)</option></select></div>
+                        <button class="btn-add" style="margin-top: 1rem; width: 100%;">Save Settings</button>
                     </div>
-                    <button class="btn-add" style="margin-top: 1rem; width: 100%;">Save Settings</button>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Register New Admin</h3>
+                        <form id="addAdminForm">
+                            <div class="form-group"><label>Username</label><input type="text" id="newAdminUser" required></div>
+                            <div class="form-group"><label>Temporary Password</label><input type="password" id="newAdminPass" required></div>
+                            <div class="form-group">
+                                <label>Role Access</label>
+                                <select id="newAdminRole">
+                                    <option value="Manager">Manager</option>
+                                    <option value="Super Admin">Super Admin</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-add" style="margin-top: 1rem; width: 100%; background: #2c3e50;">Create Account</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="card">
-                    <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Admin Security</h3>
-                    <div class="form-group"><label>Admin Username</label><input type="text" value="admin_elites" disabled style="background: #f0f0f0;"></div>
-                    <div class="form-group"><label>New Password</label><input type="password" placeholder="Enter new password"></div>
-                    <div class="form-group"><label>Confirm Password</label><input type="password" placeholder="Confirm new password"></div>
-                    <button class="btn-add" style="margin-top: 1rem; width: 100%; background: #2c3e50;">Update Password</button>
+
+                <div class="card" style="align-self: start;">
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Active Admin Accounts</h3>
+                    <table style="border: none; background: transparent;">
+                        <thead><tr><th style="padding-left: 0;">USERNAME</th><th>ROLE</th><th style="text-align: right; padding-right: 0;">ACTION</th></tr></thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -244,14 +223,25 @@
             <h3>Add New Collection Item</h3>
             <form id="productForm">
                 <div class="form-group"><label>Product Name</label><input type="text" id="pName" required></div>
+                
                 <div class="form-group">
-                    <label>Product Gallery</label>
-                    <div class="image-upload-container" onclick="document.getElementById('pImage').click()">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Click to upload images</span>
-                        <input type="file" id="pImage" multiple accept="image/*" hidden onchange="previewImages(this)">
-                        <div class="preview-grid" id="imagePreview"></div>
+                    <label>Thumbnail Image (Main Grid Image)</label>
+                    <div class="image-upload-container" onclick="document.getElementById('pThumb').click()">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Click to upload 1 primary thumbnail</span>
+                        <input type="file" id="pThumb" accept="image/*" hidden onchange="previewThumb(this)">
+                        <div id="thumbPreview" style="margin-top: 1rem; display: flex; justify-content: center;"></div>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label>Product Gallery (Max 3 Images)</label>
+                    <div class="image-upload-container" onclick="document.getElementById('pGallery').click()">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Click to upload up to 3 additional views</span>
+                        <input type="file" id="pGallery" multiple accept="image/*" hidden onchange="previewGallery(this)">
+                        <div class="preview-grid" id="galleryPreview"></div>
+                    </div>
+                </div>
+
                 <div style="display: flex; gap: 1rem;">
                     <div class="form-group" style="flex: 1;"><label>Price (PHP)</label><input type="number" id="pPrice" required></div>
                     <div class="form-group" style="flex: 1;"><label>Stock</label><input type="number" id="pStock" required></div>
@@ -259,22 +249,15 @@
                 <div class="form-group">
                     <label>Category</label>
                     <select id="pCategory">
-                        <option value="Formal Attire">Formal Attire</option>
-                        <option value="Business Casual">Business Casual</option>
-                        <option value="Smart Casual">Smart Casual</option>
-                        <option value="Office Siren">Office Siren</option>
-                        <option value="Cozy Layering">Cozy Layering</option>
-                        <option value="Rainy Office Attire">Rainy Office Attire</option>
-                        <option value="Summer Office Attire">Summer Office Attire</option>
+                        <option value="Formal Attire">Formal Attire</option><option value="Business Casual">Business Casual</option>
+                        <option value="Smart Casual">Smart Casual</option><option value="Office Siren">Office Siren</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Available Sizes</label>
                     <div class="chip-container" id="sizeContainer">
-                        <div class="chip" onclick="toggleChip(this, 'S')">S</div>
-                        <div class="chip" onclick="toggleChip(this, 'M')">M</div>
-                        <div class="chip" onclick="toggleChip(this, 'L')">L</div>
-                        <div class="chip" onclick="toggleChip(this, 'XL')">XL</div>
+                        <div class="chip" onclick="toggleChip(this, 'S')">S</div><div class="chip" onclick="toggleChip(this, 'M')">M</div>
+                        <div class="chip" onclick="toggleChip(this, 'L')">L</div><div class="chip" onclick="toggleChip(this, 'XL')">XL</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -283,7 +266,6 @@
                         <div class="color-circle" style="background: #000;" onclick="toggleColor(this, 'Black')"></div>
                         <div class="color-circle" style="background: #fff;" onclick="toggleColor(this, 'White')"></div>
                         <div class="color-circle" style="background: #808080;" onclick="toggleColor(this, 'Gray')"></div>
-                        <div class="color-circle" style="background: #354a21;" onclick="toggleColor(this, 'Forest')"></div>
                     </div>
                     <small id="selectedColorName" style="font-size: 0.7rem; color: var(--text-muted);"></small>
                 </div>
@@ -295,127 +277,241 @@
         </div>
     </div>
 
-    <script>
-        // --- 1. GLOBAL STATE (Starts Empty, Ready for Database) ---
-        let products = [];
-        let orders = [];
-        let storefrontData = { announcementText: "", announcementActive: false, heroTitle: "", heroSub: "", heroBtn: "", heroImageUrl: "" };
-        let selectedSizes = []; let selectedColors = []; let editingIndex = -1;
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        // --- 2. INTEGRATION ZONES (Where Backend Code Goes) ---
+    <script>
+        let products = []; let orders = []; let adminAccounts = [];
+        let storefrontData = { announcement_text: "", announcement_active: false, hero_title: "", hero_sub: "", hero_btn: "", hero_image_url: "" };
+        let selectedSizes = []; let selectedColors = []; let editingIndex = -1;
+        let currentThumbnail = ""; let currentGallery = [];
+
+        const supabaseUrl = 'https://mckfmkzcrpwnypxgqsuj.supabase.co'; 
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ja2Zta3pjcnB3bnlweGdxc3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTUyOTYsImV4cCI6MjA5MjA3MTI5Nn0.pRc3Bf8pPu3JDIkMdXjbILVUHYn7Z34OqRxjnnjxigE'; 
+        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.innerText = "Checking...";
+            document.getElementById('loginError').style.display = 'none';
+
+            const isMasterKey = (user === "Jarek_Melgar" && pass === "password123");
+            let foundAdmin = false;
+
+            if (!isMasterKey) {
+                try {
+                    const { data } = await window.supabaseClient.from('admins').select('*').eq('username', user).eq('password', pass);
+                    if (data && data.length > 0) foundAdmin = true;
+                } catch(err) {}
+            }
+
+            if (isMasterKey || foundAdmin) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('loginForm').reset();
+                loginBtn.innerText = "Sign In";
+                fetchAllData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('loginPass').value = '';
+                loginBtn.innerText = "Sign In";
+            }
+        });
+
+        // --- FETCH EVERYTHING FROM CLOUD (Including CMS) ---
         async function fetchAllData() {
-            // TODO: Replace with Supabase fetch commands
-            document.getElementById('system-status').innerText = "System Live: Local Environment";
-            // Simulate network delay
-            setTimeout(() => {
+            document.getElementById('system-status').innerText = "Connecting to Supabase Cloud...";
+            try {
+                const [prodRes, ordRes, adminRes, cmsRes] = await Promise.all([
+                    window.supabaseClient.from('products').select('*').order('id', { ascending: false }),
+                    window.supabaseClient.from('orders').select('*').order('date', { ascending: false }),
+                    window.supabaseClient.from('admins').select('*'),
+                    window.supabaseClient.from('cms').select('*').eq('id', 1).single() // Fetch CMS Data!
+                ]);
+
+                if (prodRes.data) products = prodRes.data;
+                if (ordRes.data) orders = ordRes.data;
+                if (adminRes.data) adminAccounts = adminRes.data;
+                if (cmsRes.data) storefrontData = cmsRes.data;
+
+                if (!adminAccounts.find(a => a.username === "Jarek_Melgar")) {
+                    adminAccounts.unshift({ username: "Jarek_Melgar", role: "Super Admin" });
+                }
+
+                document.getElementById('system-status').innerText = "System Live: Supabase Connected 🟢";
+                document.getElementById('system-status').style.color = "#27ae60";
+
                 updateDashboardStats();
                 renderProducts();
                 renderOrders();
-                loadStorefrontCMS();
-            }, 500);
+                renderAdmins();
+                loadStorefrontCMS(); // Load it into the inputs
+            } catch (error) {
+                document.getElementById('system-status').innerText = "Connection Failed. Check Console.";
+                document.getElementById('system-status').style.color = "red";
+            }
         }
 
         async function saveProductToDB(productData) {
-            // TODO: Replace with Supabase INSERT/UPDATE logic
-            if (editingIndex === -1) { products.push(productData); } 
-            else { products[editingIndex] = productData; }
+            try {
+                if (editingIndex === -1) { 
+                    const { data } = await window.supabaseClient.from('products').insert([productData]).select();
+                    if (data) products.unshift(data[0]); 
+                } else { 
+                    const targetId = products[editingIndex].id;
+                    await window.supabaseClient.from('products').update(productData).eq('id', targetId);
+                    products[editingIndex] = { ...products[editingIndex], ...productData };
+                }
+            } catch (e) {}
             renderProducts();
         }
 
-        // --- 3. DYNAMIC DASHBOARD STATS ---
-        function updateDashboardStats() {
-            // Automatically calculate totals based on current data
-            const totalOrders = orders.length;
-            const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total), 0);
-
-            document.getElementById('stat-orders').innerText = totalOrders;
-            document.getElementById('stat-sales').innerText = `₱${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            // Traffic requires external analytics API tracking later
-            document.getElementById('stat-traffic').innerText = "0"; 
+        async function deleteProduct(index) { 
+            if(confirm("Delete this product permanently?")) { 
+                try { const targetId = products[index].id; await window.supabaseClient.from('products').delete().eq('id', targetId); } catch(e) {}
+                products.splice(index, 1); renderProducts(); 
+            } 
         }
 
-        // --- 4. UI RENDER FUNCTIONS (With Empty States) ---
+        function updateDashboardStats() {
+            const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total), 0);
+            document.getElementById('stat-orders').innerText = orders.length;
+            document.getElementById('stat-sales').innerText = `₱${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+
         function renderProducts() {
             const tbody = document.getElementById('productTableBody'); tbody.innerHTML = '';
-            
-            if (products.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No products currently in inventory. Click "+ Add Product" to begin.</td></tr>`;
-                return;
-            }
-
+            if (products.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No products currently in inventory. Click "+ Add Product" to begin.</td></tr>`; return; }
             products.forEach((product, index) => {
                 const tr = document.createElement('tr');
+                const thumbHTML = product.thumbnail ? `<img src="${product.thumbnail}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 4px; margin-right: 10px; vertical-align: middle;">` : '';
                 tr.innerHTML = `
-                    <td style="font-weight: 600;">${product.name}</td>
-                    <td>${product.category}</td>
-                    <td>₱${parseFloat(product.price).toFixed(2)}</td>
-                    <td style="color: ${product.stock < 10 ? 'red' : 'inherit'}; font-weight: ${product.stock < 10 ? '600' : 'normal'};">${product.stock}</td>
-                    <td>
-                        <button onclick="editProduct(${index})" style="background: none; border: none; color: blue; cursor: pointer; margin-right: 10px;">Edit</button>
-                        <button onclick="deleteProduct(${index})" style="background: none; border: none; color: red; cursor: pointer;">Delete</button>
-                    </td>`;
+                    <td style="font-weight: 600;">${thumbHTML}${product.name}</td><td>${product.category}</td>
+                    <td>₱${parseFloat(product.price).toFixed(2)}</td><td style="color: ${product.stock < 10 ? 'red' : 'inherit'};">${product.stock}</td>
+                    <td><button onclick="editProduct(${index})" style="background: none; border: none; color: blue; cursor: pointer; margin-right: 10px;">Edit</button>
+                    <button onclick="deleteProduct(${index})" style="background: none; border: none; color: red; cursor: pointer;">Delete</button></td>`;
                 tbody.appendChild(tr);
             });
         }
 
         function renderOrders() {
             const tbody = document.getElementById('orderTableBody'); tbody.innerHTML = '';
-            
-            if (orders.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No customer orders have been placed yet.</td></tr>`;
-                return;
-            }
-
+            if (orders.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No customer orders have been placed yet.</td></tr>`; return; }
             orders.forEach((order, index) => {
                 let badgeColor = "#757575"; let badgeBg = "#f0f0f0";
                 if(order.status === "Pending") { badgeColor = "#d35400"; badgeBg = "#fdebd0"; } 
                 if(order.status === "Shipped") { badgeColor = "#2980b9"; badgeBg = "#d6eaf8"; } 
                 if(order.status === "Delivered") { badgeColor = "#27ae60"; badgeBg = "#d5f5e3"; } 
-
-                let itemsListHTML = order.items.map(item => `
-                    <div style="font-size: 0.8rem; margin-bottom: 4px; white-space: nowrap;">
-                        <span style="font-weight: 600;">${item.qty}x</span> ${item.name} <span style="color: var(--text-muted);">(${item.variant})</span>
-                    </div>`).join('');
-
+                let itemsListHTML = order.items ? order.items.map(item => `<div style="font-size: 0.8rem; margin-bottom: 4px; white-space: nowrap;"><span style="font-weight: 600;">${item.qty}x</span> ${item.name} <span style="color: var(--text-muted);">(${item.variant})</span></div>`).join('') : "No items";
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: 600;">${order.id}</td>
-                    <td>${order.customer}</td>
-                    <td>${itemsListHTML}</td>
-                    <td>${order.date}</td>
-                    <td style="font-weight: 600;">₱${parseFloat(order.total).toFixed(2)}</td>
+                tr.innerHTML = `<td style="font-weight: 600;">${order.id}</td><td>${order.customer}</td><td>${itemsListHTML}</td><td>${order.date}</td><td style="font-weight: 600;">₱${parseFloat(order.total).toFixed(2)}</td>
                     <td><span style="background: ${badgeBg}; color: ${badgeColor}; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">${order.status.toUpperCase()}</span></td>
-                    <td>
-                        <select onchange="updateOrderStatus(${index}, this.value)" style="padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border); cursor: pointer;">
-                            <option value="" disabled selected>Update...</option>
-                            <option value="Pending">Mark Pending</option>
-                            <option value="Shipped">Mark Shipped</option>
-                            <option value="Delivered">Mark Delivered</option>
-                        </select>
-                    </td>`;
+                    <td><select onchange="updateOrderStatus(${index}, this.value)" style="padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border); cursor: pointer;"><option value="" disabled selected>Update...</option><option value="Pending">Mark Pending</option><option value="Shipped">Mark Shipped</option><option value="Delivered">Mark Delivered</option></select></td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        // --- 5. INTERACTION LOGIC ---
-        function showView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('nav li').forEach(li => li.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            document.getElementById('viewTitle').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1);
+        function renderAdmins() {
+            const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '';
+            adminAccounts.forEach((admin, index) => {
+                const tr = document.createElement('tr');
+                const deleteBtn = (admin.username === "Jarek_Melgar") ? `<span style="color: var(--text-muted); font-size: 0.8rem;">Primary</span>` : `<button onclick="removeAdmin(${index})" style="background: none; border: none; color: red; cursor: pointer; font-size: 0.85rem;">Revoke</button>`;
+                tr.innerHTML = `<td style="font-weight: 600; padding-left: 0;">${admin.username}</td><td><span style="background: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">${admin.role}</span></td><td style="text-align: right; padding-right: 0;">${deleteBtn}</td>`;
+                tbody.appendChild(tr);
+            });
         }
+
+        document.getElementById('addAdminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newAdmin = { username: document.getElementById('newAdminUser').value, password: document.getElementById('newAdminPass').value, role: document.getElementById('newAdminRole').value };
+            if(adminAccounts.some(a => a.username === newAdmin.username)) return alert("Username exists!");
+            try { await window.supabaseClient.from('admins').insert([newAdmin]); } catch(e) {}
+            adminAccounts.push(newAdmin); document.getElementById('addAdminForm').reset(); renderAdmins();
+        });
+
+        async function removeAdmin(index) {
+            if(confirm("Revoke access for this admin?")) {
+                try { await window.supabaseClient.from('admins').delete().eq('username', adminAccounts[index].username); } catch(e){}
+                adminAccounts.splice(index, 1); renderAdmins();
+            }
+        }
+
+        function previewThumb(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => { currentThumbnail = e.target.result; document.getElementById('thumbPreview').innerHTML = `<img src="${currentThumbnail}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid var(--border);">`; };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewGallery(input) {
+            const container = document.getElementById('galleryPreview'); container.innerHTML = ''; currentGallery = [];
+            if (input.files) {
+                Array.from(input.files).slice(0, 3).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { currentGallery.push(e.target.result); const img = document.createElement('img'); img.src = e.target.result; img.className = 'preview-item'; container.appendChild(img); };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function loadStorefrontCMS() {
+            document.getElementById('cmsAnnounceText').value = storefrontData.announcement_text || "";
+            document.getElementById('cmsAnnounceActive').checked = storefrontData.announcement_active || false;
+            document.getElementById('cmsHeroTitle').value = storefrontData.hero_title || "";
+            document.getElementById('cmsHeroSub').value = storefrontData.hero_sub || "";
+            document.getElementById('cmsHeroBtn').value = storefrontData.hero_btn || "";
+            if(storefrontData.hero_image_url) {
+                const preview = document.getElementById('heroPreview');
+                preview.src = storefrontData.hero_image_url; preview.style.display = 'block';
+            }
+        }
+
+        function previewHero(input) {
+            const preview = document.getElementById('heroPreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { preview.src = e.target.result; preview.style.display = 'block'; storefrontData.hero_image_url = e.target.result; }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- PUSH CMS CHANGES TO CLOUD ---
+        async function saveStorefrontCMS() {
+            const cmsData = {
+                announcement_text: document.getElementById('cmsAnnounceText').value,
+                announcement_active: document.getElementById('cmsAnnounceActive').checked,
+                hero_title: document.getElementById('cmsHeroTitle').value,
+                hero_sub: document.getElementById('cmsHeroSub').value,
+                hero_btn: document.getElementById('cmsHeroBtn').value,
+                hero_image_url: storefrontData.hero_image_url || ""
+            };
+            
+            try {
+                await window.supabaseClient.from('cms').update(cmsData).eq('id', 1);
+                alert("Website Content Successfully Updated Live!");
+            } catch(e) {
+                alert("Error saving CMS data to cloud.");
+            }
+        }
+
+        function showView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('nav li').forEach(li => li.classList.remove('active')); document.getElementById(viewId).classList.add('active'); event.currentTarget.classList.add('active'); document.getElementById('viewTitle').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1); }
 
         const modal = document.getElementById('modalOverlay');
         function openModal() { modal.style.display = 'flex'; document.querySelector('.modal h3').innerText = editingIndex === -1 ? "Add New Collection Item" : "Edit Product"; }
         function closeModal() { modal.style.display = 'none'; resetForm(); }
 
-        function deleteProduct(index) { if(confirm("Delete this product?")) { products.splice(index, 1); renderProducts(); } }
         function editProduct(index) {
             editingIndex = index; const p = products[index];
-            document.getElementById('pName').value = p.name; document.getElementById('pPrice').value = p.price;
-            document.getElementById('pStock').value = p.stock; document.getElementById('pCategory').value = p.category;
-            selectedSizes = [...p.sizes]; selectedColors = [...p.colors]; openModal();
+            document.getElementById('pName').value = p.name; document.getElementById('pPrice').value = p.price; document.getElementById('pStock').value = p.stock; document.getElementById('pCategory').value = p.category;
+            selectedSizes = p.sizes ? [...p.sizes] : []; selectedColors = p.colors ? [...p.colors] : []; 
+            currentThumbnail = p.thumbnail || ""; currentGallery = p.gallery ? [...p.gallery] : [];
+            document.getElementById('thumbPreview').innerHTML = currentThumbnail ? `<img src="${currentThumbnail}" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid var(--border);">` : '';
+            const galContainer = document.getElementById('galleryPreview'); galContainer.innerHTML = '';
+            currentGallery.forEach(src => { const img = document.createElement('img'); img.src = src; img.className = 'preview-item'; galContainer.appendChild(img); });
+            openModal();
         }
 
         document.getElementById('productForm').addEventListener('submit', (e) => {
@@ -423,70 +519,28 @@
             const productData = {
                 name: document.getElementById('pName').value, price: document.getElementById('pPrice').value,
                 stock: document.getElementById('pStock').value, category: document.getElementById('pCategory').value,
-                sizes: selectedSizes, colors: selectedColors
+                sizes: selectedSizes, colors: selectedColors, thumbnail: currentThumbnail, gallery: currentGallery
             };
-            saveProductToDB(productData); // Pushes to the dynamic function instead of hardcoded logic
-            closeModal();
+            saveProductToDB(productData); closeModal();
         });
 
         function resetForm() {
             document.getElementById('productForm').reset(); document.getElementById('pCategory').selectedIndex = 0;
-            document.getElementById('imagePreview').innerHTML = '';
             document.querySelectorAll('.chip, .color-circle').forEach(c => c.classList.remove('selected'));
-            selectedSizes = []; selectedColors = []; document.getElementById('selectedColorName').innerText = ''; editingIndex = -1;
+            document.getElementById('thumbPreview').innerHTML = ''; document.getElementById('galleryPreview').innerHTML = '';
+            selectedSizes = []; selectedColors = []; currentThumbnail = ""; currentGallery = []; editingIndex = -1;
         }
 
-        // Image Previews & UI Toggles
-        function previewImages(input) {
-            const container = document.getElementById('imagePreview'); container.innerHTML = ''; 
-            if (input.files) { Array.from(input.files).forEach(file => { const reader = new FileReader(); reader.onload = (e) => { const img = document.createElement('img'); img.src = e.target.result; img.className = 'preview-item'; container.appendChild(img); }; reader.readAsDataURL(file); }); }
-        }
         function toggleChip(el, size) { el.classList.toggle('selected'); if (selectedSizes.includes(size)) { selectedSizes = selectedSizes.filter(s => s !== size); } else { selectedSizes.push(size); } }
         function toggleColor(el, color) { el.classList.toggle('selected'); document.getElementById('selectedColorName').innerText = `Selected: ${color}`; if (selectedColors.includes(color)) { selectedColors = selectedColors.filter(c => c !== color); } else { selectedColors.push(color); } }
 
-        // Storefront & Orders Handlers
-        function loadStorefrontCMS() {
-            document.getElementById('cmsAnnounceText').value = storefrontData.announcementText || "";
-            document.getElementById('cmsAnnounceActive').checked = storefrontData.announcementActive || false;
-            document.getElementById('cmsHeroTitle').value = storefrontData.heroTitle || "";
-            document.getElementById('cmsHeroSub').value = storefrontData.heroSub || "";
-            document.getElementById('cmsHeroBtn').value = storefrontData.heroBtn || "";
-        }
-        function previewHero(input) {
-            const preview = document.getElementById('heroPreview');
-            if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { preview.src = e.target.result; preview.style.display = 'block'; storefrontData.heroImageUrl = e.target.result; }; reader.readAsDataURL(input.files[0]); }
-        }
-        function saveStorefrontCMS() {
-            storefrontData.announcementText = document.getElementById('cmsAnnounceText').value; storefrontData.announcementActive = document.getElementById('cmsAnnounceActive').checked;
-            storefrontData.heroTitle = document.getElementById('cmsHeroTitle').value; storefrontData.heroSub = document.getElementById('cmsHeroSub').value; storefrontData.heroBtn = document.getElementById('cmsHeroBtn').value;
-            // TODO: Add Supabase Update here
-            alert("Website content prepared for database update!");
-        }
-        function updateOrderStatus(index, newStatus) { 
+        async function updateOrderStatus(index, newStatus) { 
             orders[index].status = newStatus; 
-            // TODO: Add Supabase Update here
+            try { await window.supabaseClient.from('orders').update({status: newStatus}).eq('id', orders[index].id); } catch(e){}
             renderOrders(); 
         }
 
-        // --- 6. AUTHENTICATION LOGIC ---
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
-
-            // Security Check (Prototype hardcoded values)
-            // In production, this will check against your Supabase Auth database
-            if (user === "admin_elites" && pass === "password123") {
-                document.getElementById('loginOverlay').style.display = 'none'; // Hide the locked door
-                document.getElementById('loginError').style.display = 'none';
-            } else {
-                document.getElementById('loginError').style.display = 'block'; // Show error text
-                document.getElementById('loginPass').value = ''; // Clear the password field
-            }
-        });
-        
-        // Initialize App Configuration on Load
-        fetchAllData();
+        setTimeout(() => { try { window.supabaseClient.from('products').select('id').limit(1); } catch(e) {} }, 1000);
     </script>
 </body>
 </html>
