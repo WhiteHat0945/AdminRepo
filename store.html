@@ -3,263 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELITES | Official Store</title>
+    <title>ELITES | Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #ffffff; --text: #1a1a1a; --muted: #757575; --accent: #000000; --border: #eeeeee; }
+        :root {
+            --bg: #f9f9f9;
+            --sidebar: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #757575;
+            --accent: #000000;
+            --border: #ececec;
+            --radius: 8px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2rem; display: flex; flex-direction: column; }
+        .logo { font-weight: 600; font-size: 1.2rem; margin-bottom: 3rem; letter-spacing: -0.5px; }
+        nav ul { list-style: none; }
+        nav li { padding: 0.8rem 1rem; margin-bottom: 0.5rem; cursor: pointer; border-radius: var(--radius); transition: 0.2s; color: var(--text-muted); font-size: 0.9rem; }
+        nav li.active { background: #f0f0f0; color: var(--accent); font-weight: 600; }
+        nav li:hover { color: var(--accent); }
+
+        main { flex: 1; padding: 3rem; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        h1 { font-size: 1.5rem; font-weight: 600; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+        .card { background: #fff; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 1.5rem; }
+        .card span { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .card h2 { font-size: 2rem; margin-top: 0.5rem; font-weight: 400; }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+        th { text-align: left; padding: 1rem; font-size: 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
+        td { padding: 1rem; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        .btn-add { background: var(--accent); color: #fff; padding: 0.7rem 1.5rem; border: none; border-radius: var(--radius); cursor: pointer; font-size: 0.85rem; }
+        .empty-state { text-align: center; padding: 3rem !important; color: var(--text-muted); font-style: italic; }
+
+        #modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background: #fff; padding: 2.5rem; width: 650px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal h3 { margin-bottom: 1.5rem; font-weight: 600; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.75rem; margin-bottom: 0.4rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; }
+        textarea { resize: vertical; min-height: 80px; }
+        .modal-actions { display: flex; gap: 1rem; margin-top: 2rem; }
+        .btn-cancel { background: none; border: none; cursor: pointer; color: var(--text-muted); }
+
+        .image-upload-container { border: 2px dashed var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; margin-bottom: 1rem; cursor: pointer; transition: 0.2s; }
+        .image-upload-container:hover { border-color: var(--accent); background: #fafafa; }
         
-        /* CONNECTION HUD */
-        #statusHUD { 
-            background: #1a1a1a; color: #00ffcc; padding: 0.8rem 1.5rem; 
-            font-family: monospace; font-size: 0.75rem; border-bottom: 2px solid #333;
-            position: sticky; top: 0; z-index: 10001;
-        }
+        .preview-grid { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
+        .img-wrap { position: relative; display: inline-block; }
+        .preview-item { width: 100px; height: 100px; background: #eee; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
+        .btn-delete-img { position: absolute; top: -8px; right: -8px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* HEADER & NAV */
-        #announcementBar { background: var(--accent); color: #fff; text-align: center; padding: 0.6rem; font-size: 0.75rem; display: none; text-transform: uppercase; letter-spacing: 1px; }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 4rem; border-bottom: 1px solid var(--border); background: #fff; }
-        .logo { font-size: 1.4rem; font-weight: 600; letter-spacing: -1px; cursor: pointer; }
-        .nav-links { display: flex; gap: 2rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* RESTORED HERO SECTION */
-        #heroSection { 
-            height: 75vh; 
-            background-color: #f5f5f5; 
-            background-size: cover; 
-            background-position: center; 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            text-align: center; 
-            color: #fff; 
-        }
-        .hero-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); }
-        .hero-content { position: relative; z-index: 1; max-width: 800px; padding: 2rem; }
-        #heroTitle { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 600; margin-bottom: 1rem; letter-spacing: -2px; line-height: 1; }
-        #heroSub { font-size: 1.1rem; font-weight: 300; margin-bottom: 2.5rem; opacity: 0.9; }
-        .btn-shop { background: #fff; color: #000; padding: 1.2rem 3rem; border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: none; }
-
-        /* PRODUCT GRID - Optimized for "Nice Fit" */
-        .collection { padding: 5rem 4rem; max-width: 1500px; margin: 0 auto; }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-            gap: 4rem 2rem; 
-        }
-        .product-card { cursor: pointer; }
-        .image-box { 
-            width: 100%; 
-            aspect-ratio: 3 / 4; /* Standard fashion photography ratio */
-            background: #f9f9f9; 
-            margin-bottom: 1.2rem; 
-            overflow: hidden; 
-            border-radius: 2px;
-        }
-        .image-box img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; /* This prevents stretching/distortion */
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .product-card:hover img { transform: scale(1.05); }
-        .product-info { display: flex; justify-content: space-between; align-items: flex-start; }
-        .p-name { font-weight: 600; font-size: 1rem; color: var(--text); }
-        .p-price { font-size: 1rem; color: var(--text); font-weight: 400; }
-        .p-cat { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; display: block; }
-
-        /* DETAIL MODAL */
-        #productModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; display: none; overflow-y: auto; padding: 4rem; }
-        .modal-close { position: fixed; top: 2rem; right: 4rem; font-size: 2.5rem; cursor: pointer; z-index: 10001; }
-        .modal-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; max-width: 1300px; margin: 0 auto; }
-        #mainView { width: 100%; aspect-ratio: 3/4; object-fit: cover; background: #f9f9f9; }
-        .thumb-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
-        .thumb-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer; border: 1px solid transparent; }
-        .thumb-strip img:hover { border-color: #000; }
-        .detail-name { font-size: 3rem; font-weight: 600; margin-bottom: 1rem; letter-spacing: -2px; }
-        .detail-price { font-size: 1.5rem; margin-bottom: 2rem; font-weight: 300; }
-        .detail-desc { font-size: 1rem; line-height: 1.7; color: #333; margin-bottom: 3rem; }
-        .chip-box { display: flex; gap: 10px; margin-bottom: 2.5rem; flex-wrap: wrap; }
-        .chip-item { border: 1px solid #ddd; padding: 10px 20px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
-        .chip-item:hover { border-color: #000; }
-        .color-dot { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; cursor: pointer; }
-        .btn-buy { width: 100%; background: #000; color: #fff; padding: 1.5rem; border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
-
-        @media (max-width: 900px) {
-            .modal-container { grid-template-columns: 1fr; }
-            #productModal { padding: 2rem; padding-top: 6rem; }
-            .modal-close { right: 2rem; top: 1.5rem; }
-            nav { padding: 1rem 2rem; }
-            .collection { padding: 3rem 2rem; }
-            #heroTitle { font-size: 3rem; }
-        }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+        .chip { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+        .chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .color-chip { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px 4px 4px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+        
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-card { background: #fff; padding: 3rem; width: 400px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border); text-align: center; }
+        .login-card .form-group { text-align: left; }
     </style>
 </head>
 <body>
 
-    <div id="statusHUD">> SYSTEM BOOTING: Re-establishing Cloud Sync...</div>
-
-    <div id="announcementBar"></div>
-
-    <nav>
-        <div class="logo" onclick="location.reload()">ELITES</div>
-        <div class="nav-links">
-            <span>Shop</span>
-            <span style="font-weight: 600;">Bag (0)</span>
-        </div>
-    </nav>
-
-    <div id="heroSection">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1 id="heroTitle">Connecting...</h1>
-            <p id="heroSub">Fetching the latest collection from ELITES.</p>
-            <button class="btn-shop" id="heroBtn" onclick="document.querySelector('.collection').scrollIntoView({behavior:'smooth'})">Explore Now</button>
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2 style="margin-bottom: 0.5rem; font-weight: 600;">Welcome Back</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Sign in to ELITES Admin</p>
+            <form id="loginForm">
+                <div class="form-group"><label>Username</label><input type="text" id="loginUser" required placeholder="Enter username"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPass" required placeholder="Enter password"></div>
+                <p id="loginError" style="color: red; font-size: 0.8rem; display: none; margin-bottom: 1rem; text-align: left;">Incorrect username or password.</p>
+                <button type="submit" class="btn-add" style="width: 100%; padding: 1rem; font-size: 1rem;" id="loginBtn">Sign In</button>
+            </form>
         </div>
     </div>
 
-    <div class="collection">
-        <h2 style="font-weight: 400; margin-bottom: 4rem; letter-spacing: -1px; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 3px;">New Season Arrivals</h2>
-        <div class="grid" id="productGrid">
-            <p style="color: #888;">Updating catalog...</p>
-        </div>
-    </div>
+    <aside>
+        <div class="logo">ELITES Admin</div>
+        <nav>
+            <ul>
+                <li class="active" onclick="showView('analytics')">Dashboard</li>
+                <li onclick="showView('products')">Inventory</li>
+                <li onclick="showView('storefront')">Storefront UI</li>
+                <li onclick="showView('orders')">Orders</li>
+                <li onclick="showView('settings')">Settings</li>
+            </ul>
+        </nav>
+    </aside>
 
-    <div id="productModal">
-        <div class="modal-close" onclick="closeModal()">×</div>
-        <div class="modal-container">
-            <div>
-                <img id="mainView" src="">
-                <div class="thumb-strip" id="thumbStrip"></div>
+    <main>
+        <header>
+            <h1 id="viewTitle">Overview</h1>
+            <button class="btn-add" onclick="openModal()">+ Add Product</button>
+        </header>
+
+        <div id="analytics" class="view active">
+            <div class="stats-grid">
+                <div class="card"><span>Website Traffic</span><h2 id="stat-traffic">0</h2></div>
+                <div class="card"><span>Total Orders</span><h2 id="stat-orders">0</h2></div>
+                <div class="card"><span>Total Revenue</span><h2 id="stat-sales">₱0.00</h2></div>
             </div>
-            <div style="padding-top: 1rem;">
-                <div id="dCat" style="font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;"></div>
-                <h1 class="detail-name" id="dName"></h1>
-                <div class="detail-price" id="dPrice"></div>
-                <p class="detail-desc" id="dDesc"></p>
+            <h3>System Status</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;" id="system-status">Awaiting connection...</p>
+        </div>
 
-                <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 1rem;">Available Sizes</span>
-                <div class="chip-box" id="dSizes"></div>
+        <div id="products" class="view">
+            <table>
+                <thead>
+                    <tr><th>PRODUCT</th><th>CATEGORY</th><th>PRICE</th><th>STOCK</th><th>ACTIONS</th></tr>
+                </thead>
+                <tbody id="productTableBody"></tbody>
+            </table>
+        </div>
 
-                <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 1rem;">Colors</span>
-                <div class="chip-box" id="dColors"></div>
+        <div id="storefront" class="view">
+            <div style="display: grid; gap: 2rem; max-width: 800px;">
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; font-weight: 600;">Announcement Bar</h3>
+                    <div class="form-group"><label>Display Text</label><input type="text" id="cmsAnnounceText"></div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+                        <input type="checkbox" id="cmsAnnounceActive" style="width: auto;">
+                        <label style="margin: 0; font-size: 0.85rem; text-transform: none;">Show announcement bar on website</label>
+                    </div>
+                </div>
 
-                <button class="btn-buy">Add to Bag</button>
-                <p id="dStock" style="font-size: 0.8rem; margin-top: 1.5rem; color: #27ae60;"></p>
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; font-weight: 600;">Hero Banner Slider</h3>
+                    <div class="form-group"><label>Main Headline</label><input type="text" id="cmsHeroTitle"></div>
+                    <div class="form-group"><label>Sub-Headline</label><input type="text" id="cmsHeroSub"></div>
+                    <div class="form-group"><label>Button Text</label><input type="text" id="cmsHeroBtn"></div>
+                    
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label>Hero Background Images (Multiple Allowed)</label>
+                        <div class="image-upload-container" onclick="document.getElementById('cmsHeroImage').click()" style="padding: 2rem;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Click to upload banner images</span>
+                            <input type="file" id="cmsHeroImage" accept="image/*" multiple hidden onchange="addHeroImages(this)">
+                        </div>
+                        <div class="preview-grid" id="heroPreviewGrid"></div>
+                    </div>
+                </div>
+                <button class="btn-add" onclick="saveStorefrontCMS()" style="padding: 1rem; font-size: 1rem;">Save Storefront Changes</button>
             </div>
+        </div>
+
+        <div id="orders" class="view">
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Manage and update customer shipments.</p>
+            <table>
+                <thead>
+                    <tr><th>ORDER ID</th><th>CUSTOMER</th><th>ITEMS</th><th>DATE</th><th>TOTAL</th><th>STATUS</th><th>ACTION</th></tr>
+                </thead>
+                <tbody id="orderTableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="settings" class="view">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px;">
+                <div>
+                    <div class="card">
+                        <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Store Profile</h3>
+                        <div class="form-group"><label>Store Name</label><input type="text" value="The ELITES Official Store"></div>
+                        <div class="form-group"><label>Support Email</label><input type="text" value="support@theelites.com"></div>
+                        <div class="form-group"><label>Default Currency</label><select><option>PHP (₱)</option><option>USD ($)</option></select></div>
+                        <button class="btn-add" style="margin-top: 1rem; width: 100%;">Save Settings</button>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Register New Admin</h3>
+                        <form id="addAdminForm">
+                            <div class="form-group"><label>Username</label><input type="text" id="newAdminUser" required></div>
+                            <div class="form-group"><label>Temporary Password</label><input type="password" id="newAdminPass" required></div>
+                            <div class="form-group">
+                                <label>Role Access</label>
+                                <select id="newAdminRole">
+                                    <option value="Manager">Manager</option>
+                                    <option value="Super Admin">Super Admin</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-add" style="margin-top: 1rem; width: 100%; background: #2c3e50;">Create Account</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card" style="align-self: start;">
+                    <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Active Admin Accounts</h3>
+                    <table style="border: none; background: transparent;">
+                        <thead><tr><th style="padding-left: 0;">USERNAME</th><th>ROLE</th><th style="text-align: right; padding-right: 0;">ACTION</th></tr></thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Details Modal Overlay -->
+        <div id="orderModalOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000;">
+         <div class="modal" style="width: 700px; padding: 2.5rem; background: #fff; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="modalOrderId" style="margin: 0; font-weight: 600;">Order Details</h3>
+                <button onclick="closeOrderModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Customer Info -->
+                <div class="card" style="margin: 0; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                    <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Customer Info</h4>
+                    <p id="modalCustomerName" style="font-weight: 600; margin-bottom: 0.2rem; font-size: 1.05rem;"></p>
+                    <p id="modalCustomerEmail" style="font-size: 0.9rem; color: var(--text-muted);"></p>
+                </div>
+                <!-- Shipping & Payment -->
+                <div class="card" style="margin: 0; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
+                    <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Delivery Details</h4>
+                    <p id="modalShippingAddress" style="font-size: 0.9rem; margin-bottom: 0.8rem; line-height: 1.4;"></p>
+                    <div style="border-top: 1px solid var(--border); padding-top: 0.8rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">PAYMENT METHOD</span>
+                        <p id="modalPaymentMethod" style="font-size: 0.9rem; font-weight: 600; margin-top: 0.2rem; text-transform: uppercase;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Purchased Items</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; border: none;">
+                <thead>
+                    <tr>
+                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; background: transparent;">Item Name</th>
+                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; background: transparent;">Variant</th>
+                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: center; background: transparent;">Qty</th>
+                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: right; background: transparent;">Price</th>
+                    </tr>
+                </thead>
+                <tbody id="modalOrderItems"></tbody>
+            </table>
+            
+            <div style="text-align: right; font-size: 1.1rem; margin-top: 1rem; padding: 1rem; background: #fafafa; border: 1px solid var(--border); border-radius: var(--radius);">
+                <span style="font-size: 0.9rem; color: var(--text-muted); margin-right: 1rem;">Total Amount:</span>
+                <span id="modalOrderTotal" style="font-weight: 600; color: var(--accent); font-size: 1.3rem;"></span>
+            </div>
+            
+            <button onclick="closeOrderModal()" class="btn-cancel" style="width: 100%; margin-top: 2rem; padding: 1rem; background: #eee; border-radius: 6px; font-weight: 600; color: #333;">Close Window</button>
+          </div>
+        </div>
+
+    </main>
+
+    <div id="modalOverlay">
+        <div class="modal">
+            <h3>Add New Collection Item</h3>
+            <form id="productForm">
+                <div class="form-group"><label>Product Name</label><input type="text" id="pName" required></div>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;"><label>Price (PHP)</label><input type="number" id="pPrice" required></div>
+                    <div class="form-group" style="flex: 1;"><label>Stock</label><input type="number" id="pStock" required></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="pCategory">
+                        <option value="Formal Attire">Formal Attire</option>
+                        <option value="Business Casual">Business Casual</option>
+                        <option value="Smart Casual">Smart Casual</option>
+                        <option value="Office Siren">Office Siren</option>
+                        <option value="Cozy Layering">Cozy Layering</option>
+                        <option value="Rainy Office Attire">Rainy Office Attire</option>
+                        <option value="Summer Office Attire">Summer Office Attire</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Description</label>
+                    <textarea id="pDesc" placeholder="Describe the material, fit, and style details..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Available Colors</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
+                        <input type="color" id="customColorHex" value="#000000" style="width: 40px; height: 40px; padding: 0; border: none; cursor: pointer; border-radius: 4px;">
+                        <input type="text" id="customColorName" placeholder="Color Name (e.g. Midnight Navy)" style="flex: 1;">
+                        <button type="button" class="btn-add" onclick="addCustomColor()" style="padding: 0.8rem 1.5rem;">Add Color</button>
+                    </div>
+                    <div class="chip-container" id="colorContainer"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Available Sizes</label>
+                    <div class="chip-container" id="sizeContainer">
+                        <div class="chip" onclick="toggleChip(this, 'S')">S</div><div class="chip" onclick="toggleChip(this, 'M')">M</div>
+                        <div class="chip" onclick="toggleChip(this, 'L')">L</div><div class="chip" onclick="toggleChip(this, 'XL')">XL</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Thumbnail Image (Main Grid Image)</label>
+                    <div class="image-upload-container" onclick="document.getElementById('pThumb').click()">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Click to upload 1 primary thumbnail</span>
+                        <input type="file" id="pThumb" accept="image/*" hidden onchange="previewThumb(this)">
+                    </div>
+                    <div id="thumbPreview" class="preview-grid"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Product Gallery (Additional Views)</label>
+                    <div class="image-upload-container" onclick="document.getElementById('pGallery').click()">
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Click to upload additional views</span>
+                        <input type="file" id="pGallery" multiple accept="image/*" hidden onchange="previewGallery(this)">
+                    </div>
+                    <div class="preview-grid" id="galleryPreview"></div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-add" style="flex: 1;">Save Product to Database</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        const hud = document.getElementById('statusHUD');
+        let products = []; let orders = []; let adminAccounts = [];
+        let storefrontData = { announcement_text: "", announcement_active: false, hero_title: "", hero_sub: "", hero_btn: "", hero_image_url: "" };
+        
+        let selectedSizes = []; 
+        let selectedColors = []; 
+        let currentThumbnail = ""; 
+        let currentGallery = [];
+        let heroImages = [];
+        let editingIndex = -1;
+
         const supabaseUrl = 'https://mckfmkzcrpwnypxgqsuj.supabase.co'; 
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ja2Zta3pjcnB3bnlweGdxc3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTUyOTYsImV4cCI6MjA5MjA3MTI5Nn0.pRc3Bf8pPu3JDIkMdXjbILVUHYn7Z34OqRxjnnjxigE'; 
-        
-        let productsList = [];
+        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        async function startStore() {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); 
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+            
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.innerText = "Checking...";
+            document.getElementById('loginError').style.display = 'none';
+
+            let isAuthorized = false;
+            
+            // Master fallback
+            if (user === "Jarek_Melgar" && pass === "password123") isAuthorized = true;
+
+            // Database check
+            if (!isAuthorized) {
+                try {
+                    const { data } = await window.supabaseClient.from('admins').select('*').eq('username', user).eq('password', pass);
+                    if (data && data.length > 0) isAuthorized = true;
+                } catch(err) {}
+            }
+
+            if (isAuthorized) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                loginBtn.innerText = "Sign In";
+                fetchAllData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                loginBtn.innerText = "Sign In";
+            }
+        });
+
+        async function fetchAllData() {
+            document.getElementById('system-status').innerText = "Connecting to Supabase Cloud...";
             try {
-                const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                hud.innerText = "> Syncing with mckfmkzcrpwnypxgqsuj... Fetching CMS & Inventory.";
+                // Notice the order 'created_at' fix here to ensure order fetching works
+                const [prodRes, ordRes, adminRes, cmsRes] = await Promise.all([
+                    window.supabaseClient.from('products').select('*').order('id', { ascending: false }),
+                    window.supabaseClient.from('orders').select('*').order('created_at', { ascending: false }),
+                    window.supabaseClient.from('admins').select('*'),
+                    window.supabaseClient.from('cms').select('*').eq('id', 1).single() 
+                ]);
 
-                // 1. Fetch CMS (Hero & Announcement)
-                const { data: cms } = await supabase.from('cms').select('*').eq('id', 1).single();
-                if (cms) {
-                    if (cms.announcement_active) {
-                        document.getElementById('announcementBar').innerText = cms.announcement_text;
-                        document.getElementById('announcementBar').style.display = 'block';
-                    }
-                    document.getElementById('heroTitle').innerText = cms.hero_title || "Welcome to ELITES";
-                    document.getElementById('heroSub').innerText = cms.hero_sub || "Elevated essentials for the modern professional.";
-                    document.getElementById('heroBtn').innerText = cms.hero_btn || "Shop Collection";
-                    document.getElementById('heroBtn').style.display = 'inline-block';
-                    if (cms.hero_image_url) {
-                        document.getElementById('heroSection').style.backgroundImage = `url('${cms.hero_image_url}')`;
-                    }
+                if (prodRes.data) products = prodRes.data;
+                if (ordRes.data) orders = ordRes.data;
+                if (adminRes.data) adminAccounts = adminRes.data;
+                if (cmsRes.data) storefrontData = cmsRes.data;
+
+                if (!adminAccounts.find(a => a.username === "Jarek_Melgar")) {
+                    adminAccounts.unshift({ username: "Jarek_Melgar", role: "Super Admin" });
                 }
 
-                // 2. Fetch Products
-                const { data: prods, error: pError } = await supabase.from('products').select('*').order('id', { ascending: false });
-                
-                if (pError) {
-                    hud.innerHTML = `<span class="error-text">> CONNECTION ERROR: ${pError.message}</span>`;
-                } else {
-                    productsList = prods;
-                    renderProducts();
-                    hud.innerText = `> SYSTEM LIVE: Found ${prods.length} products. 🟢`;
-                }
+                document.getElementById('system-status').innerText = "System Live: Supabase Connected 🟢";
+                document.getElementById('system-status').style.color = "#27ae60";
 
-            } catch (err) {
-                hud.innerHTML = `<span class="error-text">> CRITICAL ERROR: ${err.message}</span>`;
+                updateDashboardStats();
+                renderProducts();
+                renderOrders();
+                renderAdmins();
+                loadStorefrontCMS(); 
+            } catch (error) { 
+                console.error(error);
+                document.getElementById('system-status').innerText = "Connection Failed. Check Console.";
+                document.getElementById('system-status').style.color = "red";
             }
         }
 
-        function renderProducts() {
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-            productsList.forEach((p, index) => {
-                grid.innerHTML += `
-                    <div class="product-card" onclick="openProduct(${index})">
-                        <div class="image-box"><img src="${p.thumbnail || 'https://placehold.co/600x800'}"></div>
-                        <div class="product-info">
-                            <div>
-                                <span class="p-name">${p.name}</span>
-                                <span class="p-cat">${p.category}</span>
-                            </div>
-                            <span class="p-price">₱${parseFloat(p.price).toLocaleString()}</span>
-                        </div>
-                    </div>
-                `;
+        function updateDashboardStats() {
+            const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total_price || 0), 0);
+            document.getElementById('stat-orders').innerText = orders.length;
+            document.getElementById('stat-sales').innerText = `₱${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+        }
+
+        /* --- RESTORED ORDERS LOGIC --- */
+        function renderOrders() {
+            const tbody = document.getElementById('orderTableBody'); 
+            tbody.innerHTML = '';
+            
+            if (orders.length === 0) { 
+                 tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No customer orders have been placed yet.</td></tr>`; 
+                 return; 
+             }
+             
+            orders.forEach((order, index) => {
+                let badgeColor = "#757575"; let badgeBg = "#f0f0f0";
+                if(order.status === "Pending") { badgeColor = "#d35400"; badgeBg = "#fdebd0"; } 
+                 else if(order.status === "Shipped") { badgeColor = "#2980b9"; badgeBg = "#d6eaf8"; } 
+                 else if(order.status === "Paid" || order.status === "Delivered") { badgeColor = "#27ae60"; badgeBg = "#d5f5e3"; } 
+                 
+                 let itemsListHTML = "No items";
+                if (order.items && Array.isArray(order.items)) {
+                    // Summarizes items for the main table view
+                    itemsListHTML = order.items.map(item => `<div style="font-size: 0.8rem; margin-bottom: 4px; white-space: nowrap;">${item.name} (x${item.qty || 1})</div>`).join('');
+                }
+                const orderDate = order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${order.id.substring(0,8).toUpperCase()}</td>
+                    <td>${order.customer_name}<br><small>${order.customer_email}</small></td>
+                    <td>${itemsListHTML}</td>
+                    <td>${orderDate}</td>
+                    <td style="font-weight: 600;">₱${parseFloat(order.total_price).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td><span style="background: ${badgeBg}; color: ${badgeColor}; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">${order.status.toUpperCase()}</span></td>
+                    <td style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button onclick="openOrderDetails(${index})" style="background: var(--accent); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">View</button>
+                        <select onchange="updateOrderStatus(${index}, this.value)" style="padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border); cursor: pointer; flex: 1;">
+                            <option value="" disabled selected>Status...</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                        </select>
+                    </td>`;
+                tbody.appendChild(tr);
             });
         }
 
-        function openProduct(index) {
-            const p = productsList[index];
-            const modal = document.getElementById('productModal');
+        /* --- ORDER DETAILS MODAL LOGIC --- */
+        function openOrderDetails(index) {
+            const order = orders[index];
             
-            document.getElementById('dName').innerText = p.name;
-            document.getElementById('dCat').innerText = p.category;
-            document.getElementById('dPrice').innerText = `₱${parseFloat(p.price).toLocaleString()}`;
-            document.getElementById('dDesc').innerText = p.description || "A signature piece from the ELITES collection, emphasizing a minimalistic silhouette and superior fabric quality.";
-            document.getElementById('dStock').innerText = `AVAILABILITY: ${p.stock} UNITS IN STOCK`;
-
-            document.getElementById('mainView').src = p.thumbnail;
-            const thumbStrip = document.getElementById('thumbStrip');
-            thumbStrip.innerHTML = `<img src="${p.thumbnail}" onclick="document.getElementById('mainView').src = this.src">`;
+            // Header
+            document.getElementById('modalOrderId').innerText = `Order #${order.id.substring(0,8).toUpperCase()}`;
             
-            if (p.gallery && Array.isArray(p.gallery)) {
-                p.gallery.forEach(img => {
-                    thumbStrip.innerHTML += `<img src="${img}" onclick="document.getElementById('mainView').src = this.src">`;
+            // Customer Details
+            document.getElementById('modalCustomerName').innerText = order.customer_name || 'Name not provided';
+            document.getElementById('modalCustomerEmail').innerText = order.customer_email || 'Email not provided';
+            
+            // Shipping & Payment
+            document.getElementById('modalShippingAddress').innerText = order.customer_address || order.shipping_address || 'Address not provided';
+            document.getElementById('modalPaymentMethod').innerText = order.payment_method ? order.payment_method.toUpperCase() : 'N/A';
+            
+            // Items List
+            const tbody = document.getElementById('modalOrderItems');
+            tbody.innerHTML = '';
+            if (order.items && Array.isArray(order.items)) {
+                order.items.forEach(item => {
+                    const variant = item.variant || '-';
+                    const qty = item.qty || 1;
+                    const price = item.price || 0;
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="padding: 0.8rem 0; border-bottom: 1px solid var(--border);"><strong>${item.name}</strong></td>
+                            <td style="padding: 0.8rem 0; border-bottom: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem;">${variant}</td>
+                            <td style="padding: 0.8rem 0; border-bottom: 1px solid var(--border); text-align: center;">x${qty}</td>
+                            <td style="padding: 0.8rem 0; border-bottom: 1px solid var(--border); text-align: right;">₱${(parseFloat(price) * qty).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        </tr>
+                    `;
                 });
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No specific items found for this order.</td></tr>`;
             }
-
-            const sizeBox = document.getElementById('dSizes');
-            sizeBox.innerHTML = '';
-            if(p.sizes) p.sizes.forEach(s => sizeBox.innerHTML += `<div class="chip-item">${s}</div>`);
-
-            const colorBox = document.getElementById('dColors');
-            colorBox.innerHTML = '';
-            const colorMap = { "Black": "#000", "White": "#fff", "Gray": "#808080", "Forest": "#354a21" };
-            if(p.colors) {
-                p.colors.forEach(c => {
-                    colorBox.innerHTML += `<div class="color-dot" style="background: ${colorMap[c] || '#ddd'}" title="${c}"></div>`;
-                });
-            }
-
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            
+            // Total
+            document.getElementById('modalOrderTotal').innerText = `₱${parseFloat(order.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            
+            // Show Modal
+            document.getElementById('orderModalOverlay').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
+        function closeOrderModal() {
+            document.getElementById('orderModalOverlay').style.display = 'none';
         }
 
-        window.onload = () => setTimeout(startStore, 400);
+        async function updateOrderStatus(index, newStatus) { 
+            orders[index].status = newStatus; 
+            renderOrders(); // Update UI immediately
+            updateDashboardStats();
+            try { 
+                await window.supabaseClient.from('orders').update({status: newStatus}).eq('id', orders[index].id); 
+            } catch(e) { console.error(e); }
+        }
+
+        /* --- RESTORED ADMIN SETTINGS LOGIC --- */
+        function renderAdmins() {
+            const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '';
+            adminAccounts.forEach((admin, index) => {
+                const tr = document.createElement('tr');
+                const deleteBtn = (admin.username === "Jarek_Melgar") ? `<span style="color: var(--text-muted); font-size: 0.8rem;">Primary</span>` : `<button onclick="removeAdmin(${index})" style="background: none; border: none; color: red; cursor: pointer; font-size: 0.85rem;">Revoke</button>`;
+                tr.innerHTML = `<td style="font-weight: 600; padding-left: 0;">${admin.username}</td><td><span style="background: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">${admin.role}</span></td><td style="text-align: right; padding-right: 0;">${deleteBtn}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('addAdminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newAdmin = { username: document.getElementById('newAdminUser').value, password: document.getElementById('newAdminPass').value, role: document.getElementById('newAdminRole').value };
+            if(adminAccounts.some(a => a.username === newAdmin.username)) return alert("Username exists!");
+            try { await window.supabaseClient.from('admins').insert([newAdmin]); } catch(e) {}
+            adminAccounts.push(newAdmin); document.getElementById('addAdminForm').reset(); renderAdmins();
+        });
+
+        async function removeAdmin(index) {
+            if(confirm("Revoke access for this admin?")) {
+                try { await window.supabaseClient.from('admins').delete().eq('username', adminAccounts[index].username); } catch(e){}
+                adminAccounts.splice(index, 1); renderAdmins();
+            }
+        }
+
+        /* --- PRODUCT IMAGE DELETION LOGIC --- */
+        function previewThumb(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => { currentThumbnail = e.target.result; renderThumbPreview(); };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        function renderThumbPreview() {
+            const container = document.getElementById('thumbPreview');
+            if(!currentThumbnail) { container.innerHTML = ''; return; }
+            container.innerHTML = `<div class="img-wrap"><img src="${currentThumbnail}" class="preview-item"><button type="button" class="btn-delete-img" onclick="removeThumb()">×</button></div>`;
+        }
+        function removeThumb() { currentThumbnail = ""; renderThumbPreview(); }
+
+        function previewGallery(input) {
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { currentGallery.push(e.target.result); renderGalleryPreview(); };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+        function renderGalleryPreview() {
+            const container = document.getElementById('galleryPreview');
+            container.innerHTML = currentGallery.map((src, i) => `<div class="img-wrap"><img src="${src}" class="preview-item"><button type="button" class="btn-delete-img" onclick="removeGalleryImg(${i})">×</button></div>`).join('');
+        }
+        function removeGalleryImg(i) { currentGallery.splice(i, 1); renderGalleryPreview(); }
+
+        /* --- CUSTOM COLOR WHEEL LOGIC --- */
+        function addCustomColor() {
+            const hex = document.getElementById('customColorHex').value;
+            let name = document.getElementById('customColorName').value.trim();
+            if(!name) name = hex; 
+            
+            if(!selectedColors.some(c => c.hex === hex || c.name === name)) {
+                selectedColors.push({ name, hex });
+                renderColors();
+            }
+            document.getElementById('customColorName').value = '';
+        }
+        function renderColors() {
+            const container = document.getElementById('colorContainer');
+            container.innerHTML = selectedColors.map((c, i) => `
+                <div class="color-chip">
+                    <div style="width:16px; height:16px; border-radius:50%; background:${c.hex}; border:1px solid #ddd;"></div>
+                    <span>${c.name}</span>
+                    <span style="cursor:pointer; font-weight:bold; color:red; margin-left:5px;" onclick="removeColor(${i})">×</span>
+                </div>
+            `).join('');
+        }
+        function removeColor(i) { selectedColors.splice(i, 1); renderColors(); }
+
+        function toggleChip(el, size) { el.classList.toggle('selected'); if (selectedSizes.includes(size)) { selectedSizes = selectedSizes.filter(s => s !== size); } else { selectedSizes.push(size); } }
+
+        /* --- HERO MULTI-IMAGE LOGIC (STOREFRONT CMS) --- */
+        function loadStorefrontCMS() {
+            document.getElementById('cmsAnnounceText').value = storefrontData.announcement_text || "";
+            document.getElementById('cmsAnnounceActive').checked = storefrontData.announcement_active || false;
+            document.getElementById('cmsHeroTitle').value = storefrontData.hero_title || "";
+            document.getElementById('cmsHeroSub').value = storefrontData.hero_sub || "";
+            document.getElementById('cmsHeroBtn').value = storefrontData.hero_btn || "";
+            
+            try {
+                if(storefrontData.hero_image_url) {
+                    if(storefrontData.hero_image_url.startsWith('[')) {
+                        heroImages = JSON.parse(storefrontData.hero_image_url);
+                    } else {
+                        heroImages = [storefrontData.hero_image_url];
+                    }
+                }
+            } catch(e) {}
+            renderHeroImages();
+        }
+
+        function addHeroImages(input) {
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { heroImages.push(e.target.result); renderHeroImages(); }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function renderHeroImages() {
+            const container = document.getElementById('heroPreviewGrid');
+            container.innerHTML = heroImages.map((src, i) => `
+                <div class="img-wrap" style="width: 150px; height: 100px;">
+                    <img src="${src}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                    <button type="button" class="btn-delete-img" onclick="removeHeroImage(${i})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeHeroImage(i) { heroImages.splice(i, 1); renderHeroImages(); }
+
+        async function saveStorefrontCMS() {
+            const cmsData = {
+                announcement_text: document.getElementById('cmsAnnounceText').value,
+                announcement_active: document.getElementById('cmsAnnounceActive').checked,
+                hero_title: document.getElementById('cmsHeroTitle').value,
+                hero_sub: document.getElementById('cmsHeroSub').value,
+                hero_btn: document.getElementById('cmsHeroBtn').value,
+                hero_image_url: JSON.stringify(heroImages) 
+            };
+            try {
+                await window.supabaseClient.from('cms').update(cmsData).eq('id', 1);
+                alert("Storefront Updated Live!");
+            } catch(e) { alert("Error saving CMS data."); }
+        }
+
+        /* --- PRODUCT CRUD LOGIC --- */
+        async function saveProductToDB(productData) {
+            try {
+                if (editingIndex === -1) { 
+                    const { data } = await window.supabaseClient.from('products').insert([productData]).select();
+                    if (data) products.unshift(data[0]); 
+                } else { 
+                    const targetId = products[editingIndex].id;
+                    await window.supabaseClient.from('products').update(productData).eq('id', targetId);
+                    products[editingIndex] = { ...products[editingIndex], ...productData };
+                }
+            } catch (e) {}
+            renderProducts();
+        }
+
+        async function deleteProduct(index) { 
+            if(confirm("Delete this product permanently?")) { 
+                try { await window.supabaseClient.from('products').delete().eq('id', products[index].id); } catch(e) {}
+                products.splice(index, 1); renderProducts(); 
+            } 
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('productTableBody'); tbody.innerHTML = '';
+            products.forEach((product, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600;">${product.name}</td><td>${product.category}</td>
+                    <td>₱${parseFloat(product.price).toFixed(2)}</td><td>${product.stock}</td>
+                    <td><button onclick="editProduct(${index})" style="background: none; border: none; color: blue; cursor: pointer; margin-right: 10px;">Edit</button>
+                    <button onclick="deleteProduct(${index})" style="background: none; border: none; color: red; cursor: pointer;">Delete</button></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editProduct(index) {
+            editingIndex = index; const p = products[index];
+            document.getElementById('pName').value = p.name; 
+            document.getElementById('pPrice').value = p.price; 
+            document.getElementById('pStock').value = p.stock; 
+            document.getElementById('pCategory').value = p.category;
+            document.getElementById('pDesc').value = p.description || ""; 
+
+            selectedSizes = p.sizes ? [...p.sizes] : []; 
+            document.querySelectorAll('.chip').forEach(c => {
+                c.classList.remove('selected');
+                if (selectedSizes.includes(c.innerText)) c.classList.add('selected');
+            });
+
+            selectedColors = (p.colors || []).map(c => typeof c === 'string' ? { name: c, hex: '#000000' } : c);
+            renderColors();
+
+            currentThumbnail = p.thumbnail || ""; renderThumbPreview();
+            currentGallery = p.gallery ? [...p.gallery] : []; renderGalleryPreview();
+            
+            openModal();
+        }
+
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const productData = {
+                name: document.getElementById('pName').value, 
+                price: document.getElementById('pPrice').value,
+                stock: document.getElementById('pStock').value, 
+                category: document.getElementById('pCategory').value,
+                description: document.getElementById('pDesc').value, 
+                sizes: selectedSizes, 
+                colors: selectedColors, 
+                thumbnail: currentThumbnail, 
+                gallery: currentGallery
+            };
+            saveProductToDB(productData); closeModal();
+        });
+
+        /* --- UTILITIES --- */
+        const modal = document.getElementById('modalOverlay');
+        function openModal() { modal.style.display = 'flex'; document.querySelector('.modal h3').innerText = editingIndex === -1 ? "Add New Item" : "Edit Product"; }
+        function closeModal() { 
+            modal.style.display = 'none'; document.getElementById('productForm').reset(); 
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+            selectedSizes = []; selectedColors = []; currentThumbnail = ""; currentGallery = []; editingIndex = -1;
+            renderThumbPreview(); renderGalleryPreview(); renderColors();
+        }
+        function showView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('nav li').forEach(li => li.classList.remove('active')); document.getElementById(viewId).classList.add('active'); event.currentTarget.classList.add('active'); document.getElementById('viewTitle').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1); }
+
     </script>
 </body>
 </html>
