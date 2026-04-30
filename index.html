@@ -19,18 +19,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
-        aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2rem; display: flex; flex-direction: column; }
+        /* Sidebar & Overlay */
+        aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2rem; display: flex; flex-direction: column; z-index: 1000; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px); }
         .logo { font-weight: 600; font-size: 1.2rem; margin-bottom: 3rem; letter-spacing: -0.5px; }
         nav ul { list-style: none; }
         nav li { padding: 0.8rem 1rem; margin-bottom: 0.5rem; cursor: pointer; border-radius: var(--radius); transition: 0.2s; color: var(--text-muted); font-size: 0.9rem; }
         nav li.active { background: #f0f0f0; color: var(--accent); font-weight: 600; }
         nav li:hover { color: var(--accent); }
 
-        main { flex: 1; padding: 3rem; overflow-y: auto; }
+        /* Main Content Area */
+        main { flex: 1; padding: 3rem; overflow-y: auto; width: 100%; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        
+        /* Mobile Header Elements */
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-main); }
         h1 { font-size: 1.5rem; font-weight: 600; }
 
+        /* Grids & Cards */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+        .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         .card { background: #fff; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 1.5rem; }
         .card span { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .card h2 { font-size: 2rem; margin-top: 0.5rem; font-weight: 400; }
@@ -38,38 +47,69 @@
         .view { display: none; }
         .view.active { display: block; }
 
-        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+        /* Tables */
+        .table-responsive { width: 100%; overflow-x: auto; background: #fff; border-radius: var(--radius); border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         th { text-align: left; padding: 1rem; font-size: 0.8rem; border-bottom: 1px solid var(--border); color: var(--text-muted); }
         td { padding: 1rem; font-size: 0.9rem; border-bottom: 1px solid var(--border); }
+        
+        /* Buttons & Forms */
         .btn-add { background: var(--accent); color: #fff; padding: 0.7rem 1.5rem; border: none; border-radius: var(--radius); cursor: pointer; font-size: 0.85rem; }
         .empty-state { text-align: center; padding: 3rem !important; color: var(--text-muted); font-style: italic; }
+        .form-row { display: flex; gap: 1rem; }
 
-        #modalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal { background: #fff; padding: 2.5rem; width: 650px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        /* Modals */
+        #modalOverlay, #orderModalOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+        .modal { background: #fff; padding: 2.5rem; width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .modal-large { max-width: 700px; }
         .modal h3 { margin-bottom: 1.5rem; font-weight: 600; }
-        .form-group { margin-bottom: 1.2rem; }
+        .form-group { margin-bottom: 1.2rem; flex: 1; }
         .form-group label { display: block; font-size: 0.75rem; margin-bottom: 0.4rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
         input[type="text"], input[type="password"], input[type="number"], select, textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
         .modal-actions { display: flex; gap: 1rem; margin-top: 2rem; }
         .btn-cancel { background: none; border: none; cursor: pointer; color: var(--text-muted); }
 
+        /* Image Uploads & Chips */
         .image-upload-container { border: 2px dashed var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; margin-bottom: 1rem; cursor: pointer; transition: 0.2s; }
         .image-upload-container:hover { border-color: var(--accent); background: #fafafa; }
-        
         .preview-grid { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
         .img-wrap { position: relative; display: inline-block; }
         .preview-item { width: 100px; height: 100px; background: #eee; border-radius: 4px; object-fit: cover; border: 1px solid #ddd; }
         .btn-delete-img { position: absolute; top: -8px; right: -8px; background: #ff4444; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-
         .chip-container { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
         .chip { padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.5rem; }
         .chip.selected { background: var(--accent); color: #fff; border-color: var(--accent); }
         .color-chip { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px 4px 4px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
         
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .login-card { background: #fff; padding: 3rem; width: 400px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border); text-align: center; }
+        /* Login Overlay */
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 1rem; }
+        .login-card { background: #fff; padding: 3rem; width: 100%; max-width: 400px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid var(--border); text-align: center; }
         .login-card .form-group { text-align: left; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 768px) {
+            aside { position: fixed; left: -260px; height: 100vh; transition: left 0.3s ease; }
+            aside.active { left: 0; }
+            .sidebar-overlay.active { display: block; }
+            
+            main { padding: 1.5rem 1rem; }
+            header { margin-bottom: 2rem; }
+            .menu-toggle { display: block; }
+            h1 { font-size: 1.25rem; }
+            
+            .stats-grid { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
+            .grid-2-col { grid-template-columns: 1fr !important; gap: 1.5rem; }
+            .form-row { flex-direction: column; gap: 0; }
+            
+            .card { padding: 1.25rem; }
+            .modal { padding: 1.5rem; }
+            .login-card { padding: 2rem 1.5rem; }
+            
+            /* Ensure modal buttons stack nicely on mobile */
+            .modal-actions { flex-direction: column; }
+            .btn-cancel { padding: 0.8rem; background: #f0f0f0; border-radius: var(--radius); }
+        }
     </style>
 </head>
 <body>
@@ -87,6 +127,8 @@
         </div>
     </div>
 
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
     <aside>
         <div class="logo">ELITES Admin</div>
         <nav>
@@ -102,7 +144,10 @@
 
     <main>
         <header>
-            <h1 id="viewTitle">Overview</h1>
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <h1 id="viewTitle">Overview</h1>
+            </div>
             <button class="btn-add" onclick="openModal()">+ Add Product</button>
         </header>
 
@@ -117,12 +162,14 @@
         </div>
 
         <div id="products" class="view">
-            <table>
-                <thead>
-                    <tr><th>PRODUCT</th><th>CATEGORY</th><th>PRICE</th><th>STOCK</th><th>ACTIONS</th></tr>
-                </thead>
-                <tbody id="productTableBody"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>PRODUCT</th><th>CATEGORY</th><th>PRICE</th><th>STOCK</th><th>ACTIONS</th></tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </div>
         </div>
 
         <div id="storefront" class="view">
@@ -157,16 +204,18 @@
 
         <div id="orders" class="view">
             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Manage and update customer shipments.</p>
-            <table>
-                <thead>
-                    <tr><th>ORDER ID</th><th>CUSTOMER</th><th>ITEMS</th><th>DATE</th><th>TOTAL</th><th>STATUS</th><th>ACTION</th></tr>
-                </thead>
-                <tbody id="orderTableBody"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>ORDER ID</th><th>CUSTOMER</th><th>ITEMS</th><th>DATE</th><th>TOTAL</th><th>STATUS</th><th>ACTION</th></tr>
+                    </thead>
+                    <tbody id="orderTableBody"></tbody>
+                </table>
+            </div>
         </div>
 
         <div id="settings" class="view">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 1000px;">
+            <div class="grid-2-col" style="max-width: 1000px;">
                 <div>
                     <div class="card">
                         <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Store Profile</h3>
@@ -195,23 +244,25 @@
 
                 <div class="card" style="align-self: start;">
                     <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Active Admin Accounts</h3>
-                    <table style="border: none; background: transparent;">
-                        <thead><tr><th style="padding-left: 0;">USERNAME</th><th>ROLE</th><th style="text-align: right; padding-right: 0;">ACTION</th></tr></thead>
-                        <tbody id="adminTableBody"></tbody>
-                    </table>
+                    <div class="table-responsive" style="border: none;">
+                        <table style="border: none; background: transparent;">
+                            <thead><tr><th style="padding-left: 0;">USERNAME</th><th>ROLE</th><th style="text-align: right; padding-right: 0;">ACTION</th></tr></thead>
+                            <tbody id="adminTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Order Details Modal Overlay -->
-        <div id="orderModalOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000;">
-         <div class="modal" style="width: 700px; padding: 2.5rem; background: #fff; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto;">
+        <div id="orderModalOverlay">
+         <div class="modal modal-large">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h3 id="modalOrderId" style="margin: 0; font-weight: 600;">Order Details</h3>
                 <button onclick="closeOrderModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="grid-2-col" style="margin-bottom: 2rem;">
                 <!-- Customer Info -->
                 <div class="card" style="margin: 0; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
                     <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Customer Info</h4>
@@ -230,17 +281,19 @@
             </div>
 
             <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Purchased Items</h4>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; border: none;">
-                <thead>
-                    <tr>
-                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; background: transparent;">Item Name</th>
-                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; background: transparent;">Variant</th>
-                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: center; background: transparent;">Qty</th>
-                        <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: right; background: transparent;">Price</th>
-                    </tr>
-                </thead>
-                <tbody id="modalOrderItems"></tbody>
-            </table>
+            <div class="table-responsive" style="border: none; margin-bottom: 1.5rem;">
+                <table style="width: 100%; border-collapse: collapse; border: none;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; background: transparent;">Item Name</th>
+                            <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: left; background: transparent;">Variant</th>
+                            <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: center; background: transparent;">Qty</th>
+                            <th style="padding: 0.5rem 0; border-bottom: 1px solid var(--border); text-align: right; background: transparent;">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalOrderItems"></tbody>
+                </table>
+            </div>
             
             <div style="text-align: right; font-size: 1.1rem; margin-top: 1rem; padding: 1rem; background: #fafafa; border: 1px solid var(--border); border-radius: var(--radius);">
                 <span style="font-size: 0.9rem; color: var(--text-muted); margin-right: 1rem;">Total Amount:</span>
@@ -248,7 +301,7 @@
             </div>
             
             <button onclick="closeOrderModal()" class="btn-cancel" style="width: 100%; margin-top: 2rem; padding: 1rem; background: #eee; border-radius: 6px; font-weight: 600; color: #333;">Close Window</button>
-          </div>
+         </div>
         </div>
 
     </main>
@@ -259,9 +312,9 @@
             <form id="productForm">
                 <div class="form-group"><label>Product Name</label><input type="text" id="pName" required></div>
                 
-                <div style="display: flex; gap: 1rem;">
-                    <div class="form-group" style="flex: 1;"><label>Price (PHP)</label><input type="number" id="pPrice" required></div>
-                    <div class="form-group" style="flex: 1;"><label>Stock</label><input type="number" id="pStock" required></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Price (PHP)</label><input type="number" id="pPrice" required></div>
+                    <div class="form-group"><label>Stock</label><input type="number" id="pStock" required></div>
                 </div>
                 
                 <div class="form-group">
@@ -284,9 +337,9 @@
 
                 <div class="form-group">
                     <label>Available Colors</label>
-                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
                         <input type="color" id="customColorHex" value="#000000" style="width: 40px; height: 40px; padding: 0; border: none; cursor: pointer; border-radius: 4px;">
-                        <input type="text" id="customColorName" placeholder="Color Name (e.g. Midnight Navy)" style="flex: 1;">
+                        <input type="text" id="customColorName" placeholder="Color Name (e.g. Midnight Navy)" style="flex: 1; min-width: 150px;">
                         <button type="button" class="btn-add" onclick="addCustomColor()" style="padding: 0.8rem 1.5rem;">Add Color</button>
                     </div>
                     <div class="chip-container" id="colorContainer"></div>
@@ -343,6 +396,12 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ja2Zta3pjcnB3bnlweGdxc3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTUyOTYsImV4cCI6MjA5MjA3MTI5Nn0.pRc3Bf8pPu3JDIkMdXjbILVUHYn7Z34OqRxjnnjxigE'; 
         window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        /* --- MOBILE SIDEBAR LOGIC --- */
+        function toggleSidebar() {
+            document.querySelector('aside').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault(); 
             const user = document.getElementById('loginUser').value;
@@ -353,11 +412,8 @@
             document.getElementById('loginError').style.display = 'none';
 
             let isAuthorized = false;
-            
-            // Master fallback
             if (user === "Jarek_Melgar" && pass === "password123") isAuthorized = true;
 
-            // Database check
             if (!isAuthorized) {
                 try {
                     const { data } = await window.supabaseClient.from('admins').select('*').eq('username', user).eq('password', pass);
@@ -378,7 +434,6 @@
         async function fetchAllData() {
             document.getElementById('system-status').innerText = "Connecting to Supabase Cloud...";
             try {
-                // Notice the order 'created_at' fix here to ensure order fetching works
                 const [prodRes, ordRes, adminRes, cmsRes] = await Promise.all([
                     window.supabaseClient.from('products').select('*').order('id', { ascending: false }),
                     window.supabaseClient.from('orders').select('*').order('created_at', { ascending: false }),
@@ -416,7 +471,6 @@
             document.getElementById('stat-sales').innerText = `₱${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
         }
 
-        /* --- RESTORED ORDERS LOGIC --- */
         function renderOrders() {
             const tbody = document.getElementById('orderTableBody'); 
             tbody.innerHTML = '';
@@ -434,7 +488,6 @@
                  
                  let itemsListHTML = "No items";
                 if (order.items && Array.isArray(order.items)) {
-                    // Summarizes items for the main table view
                     itemsListHTML = order.items.map(item => `<div style="font-size: 0.8rem; margin-bottom: 4px; white-space: nowrap;">${item.name} (x${item.qty || 1})</div>`).join('');
                 }
                 const orderDate = order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A';
@@ -448,7 +501,7 @@
                     <td><span style="background: ${badgeBg}; color: ${badgeColor}; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">${order.status.toUpperCase()}</span></td>
                     <td style="display: flex; gap: 0.5rem; align-items: center;">
                         <button onclick="openOrderDetails(${index})" style="background: var(--accent); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">View</button>
-                        <select onchange="updateOrderStatus(${index}, this.value)" style="padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border); cursor: pointer; flex: 1;">
+                        <select onchange="updateOrderStatus(${index}, this.value)" style="padding: 0.4rem; border-radius: 4px; font-size: 0.8rem; border: 1px solid var(--border); cursor: pointer; flex: 1; min-width: 100px;">
                             <option value="" disabled selected>Status...</option>
                             <option value="Pending">Pending</option>
                             <option value="Paid">Paid</option>
@@ -460,22 +513,14 @@
             });
         }
 
-        /* --- ORDER DETAILS MODAL LOGIC --- */
         function openOrderDetails(index) {
             const order = orders[index];
-            
-            // Header
             document.getElementById('modalOrderId').innerText = `Order #${order.id.substring(0,8).toUpperCase()}`;
-            
-            // Customer Details
             document.getElementById('modalCustomerName').innerText = order.customer_name || 'Name not provided';
             document.getElementById('modalCustomerEmail').innerText = order.customer_email || 'Email not provided';
-            
-            // Shipping & Payment
             document.getElementById('modalShippingAddress').innerText = order.customer_address || order.shipping_address || 'Address not provided';
             document.getElementById('modalPaymentMethod').innerText = order.payment_method ? order.payment_method.toUpperCase() : 'N/A';
             
-            // Items List
             const tbody = document.getElementById('modalOrderItems');
             tbody.innerHTML = '';
             if (order.items && Array.isArray(order.items)) {
@@ -483,7 +528,6 @@
                     const variant = item.variant || '-';
                     const qty = item.qty || 1;
                     const price = item.price || 0;
-                    
                     tbody.innerHTML += `
                         <tr>
                             <td style="padding: 0.8rem 0; border-bottom: 1px solid var(--border);"><strong>${item.name}</strong></td>
@@ -497,27 +541,19 @@
                 tbody.innerHTML = `<tr><td colspan="4" class="empty-state">No specific items found for this order.</td></tr>`;
             }
             
-            // Total
             document.getElementById('modalOrderTotal').innerText = `₱${parseFloat(order.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            
-            // Show Modal
             document.getElementById('orderModalOverlay').style.display = 'flex';
         }
 
-        function closeOrderModal() {
-            document.getElementById('orderModalOverlay').style.display = 'none';
-        }
+        function closeOrderModal() { document.getElementById('orderModalOverlay').style.display = 'none'; }
 
         async function updateOrderStatus(index, newStatus) { 
             orders[index].status = newStatus; 
-            renderOrders(); // Update UI immediately
+            renderOrders(); 
             updateDashboardStats();
-            try { 
-                await window.supabaseClient.from('orders').update({status: newStatus}).eq('id', orders[index].id); 
-            } catch(e) { console.error(e); }
+            try { await window.supabaseClient.from('orders').update({status: newStatus}).eq('id', orders[index].id); } catch(e) {}
         }
 
-        /* --- RESTORED ADMIN SETTINGS LOGIC --- */
         function renderAdmins() {
             const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '';
             adminAccounts.forEach((admin, index) => {
@@ -543,7 +579,6 @@
             }
         }
 
-        /* --- PRODUCT IMAGE DELETION LOGIC --- */
         function previewThumb(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -573,15 +608,12 @@
         }
         function removeGalleryImg(i) { currentGallery.splice(i, 1); renderGalleryPreview(); }
 
-        /* --- CUSTOM COLOR WHEEL LOGIC --- */
         function addCustomColor() {
             const hex = document.getElementById('customColorHex').value;
             let name = document.getElementById('customColorName').value.trim();
             if(!name) name = hex; 
-            
             if(!selectedColors.some(c => c.hex === hex || c.name === name)) {
-                selectedColors.push({ name, hex });
-                renderColors();
+                selectedColors.push({ name, hex }); renderColors();
             }
             document.getElementById('customColorName').value = '';
         }
@@ -599,21 +631,16 @@
 
         function toggleChip(el, size) { el.classList.toggle('selected'); if (selectedSizes.includes(size)) { selectedSizes = selectedSizes.filter(s => s !== size); } else { selectedSizes.push(size); } }
 
-        /* --- HERO MULTI-IMAGE LOGIC (STOREFRONT CMS) --- */
         function loadStorefrontCMS() {
             document.getElementById('cmsAnnounceText').value = storefrontData.announcement_text || "";
             document.getElementById('cmsAnnounceActive').checked = storefrontData.announcement_active || false;
             document.getElementById('cmsHeroTitle').value = storefrontData.hero_title || "";
             document.getElementById('cmsHeroSub').value = storefrontData.hero_sub || "";
             document.getElementById('cmsHeroBtn').value = storefrontData.hero_btn || "";
-            
             try {
                 if(storefrontData.hero_image_url) {
-                    if(storefrontData.hero_image_url.startsWith('[')) {
-                        heroImages = JSON.parse(storefrontData.hero_image_url);
-                    } else {
-                        heroImages = [storefrontData.hero_image_url];
-                    }
+                    if(storefrontData.hero_image_url.startsWith('[')) heroImages = JSON.parse(storefrontData.hero_image_url);
+                    else heroImages = [storefrontData.hero_image_url];
                 }
             } catch(e) {}
             renderHeroImages();
@@ -632,7 +659,7 @@
         function renderHeroImages() {
             const container = document.getElementById('heroPreviewGrid');
             container.innerHTML = heroImages.map((src, i) => `
-                <div class="img-wrap" style="width: 150px; height: 100px;">
+                <div class="img-wrap" style="width: 100px; height: 100px;">
                     <img src="${src}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
                     <button type="button" class="btn-delete-img" onclick="removeHeroImage(${i})">×</button>
                 </div>
@@ -656,7 +683,6 @@
             } catch(e) { alert("Error saving CMS data."); }
         }
 
-        /* --- PRODUCT CRUD LOGIC --- */
         async function saveProductToDB(productData) {
             try {
                 if (editingIndex === -1) { 
@@ -717,20 +743,14 @@
         document.getElementById('productForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const productData = {
-                name: document.getElementById('pName').value, 
-                price: document.getElementById('pPrice').value,
-                stock: document.getElementById('pStock').value, 
-                category: document.getElementById('pCategory').value,
-                description: document.getElementById('pDesc').value, 
-                sizes: selectedSizes, 
-                colors: selectedColors, 
-                thumbnail: currentThumbnail, 
-                gallery: currentGallery
+                name: document.getElementById('pName').value, price: document.getElementById('pPrice').value,
+                stock: document.getElementById('pStock').value, category: document.getElementById('pCategory').value,
+                description: document.getElementById('pDesc').value, sizes: selectedSizes, colors: selectedColors, 
+                thumbnail: currentThumbnail, gallery: currentGallery
             };
             saveProductToDB(productData); closeModal();
         });
 
-        /* --- UTILITIES --- */
         const modal = document.getElementById('modalOverlay');
         function openModal() { modal.style.display = 'flex'; document.querySelector('.modal h3').innerText = editingIndex === -1 ? "Add New Item" : "Edit Product"; }
         function closeModal() { 
@@ -739,8 +759,19 @@
             selectedSizes = []; selectedColors = []; currentThumbnail = ""; currentGallery = []; editingIndex = -1;
             renderThumbPreview(); renderGalleryPreview(); renderColors();
         }
-        function showView(viewId) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.querySelectorAll('nav li').forEach(li => li.classList.remove('active')); document.getElementById(viewId).classList.add('active'); event.currentTarget.classList.add('active'); document.getElementById('viewTitle').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1); }
-
+        function showView(viewId) { 
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
+            document.querySelectorAll('nav li').forEach(li => li.classList.remove('active')); 
+            document.getElementById(viewId).classList.add('active'); 
+            event.currentTarget.classList.add('active'); 
+            document.getElementById('viewTitle').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1); 
+            
+            // Auto-close sidebar on mobile after clicking a link
+            if (window.innerWidth <= 768) {
+                document.querySelector('aside').classList.remove('active');
+                document.querySelector('.sidebar-overlay').classList.remove('active');
+            }
+        }
     </script>
 </body>
 </html>
