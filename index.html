@@ -23,10 +23,11 @@
         aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); padding: 2rem; display: flex; flex-direction: column; z-index: 1000; }
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px); }
         .logo { font-weight: 600; font-size: 1.2rem; margin-bottom: 3rem; letter-spacing: -0.5px; }
-        nav ul { list-style: none; }
+        nav ul { list-style: none; flex: 1; }
         nav li { padding: 0.8rem 1rem; margin-bottom: 0.5rem; cursor: pointer; border-radius: var(--radius); transition: 0.2s; color: var(--text-muted); font-size: 0.9rem; }
         nav li.active { background: #f0f0f0; color: var(--accent); font-weight: 600; }
         nav li:hover { color: var(--accent); }
+        .logout-btn { margin-top: auto; color: #ff4444; font-weight: 600; }
 
         /* Main Content Area */
         main { flex: 1; padding: 3rem; overflow-y: auto; width: 100%; }
@@ -55,6 +56,7 @@
         
         /* Buttons & Forms */
         .btn-add { background: var(--accent); color: #fff; padding: 0.7rem 1.5rem; border: none; border-radius: var(--radius); cursor: pointer; font-size: 0.85rem; }
+        .btn-add:disabled { background: #ccc; cursor: not-allowed; }
         .empty-state { text-align: center; padding: 3rem !important; color: var(--text-muted); font-style: italic; }
         .form-row { display: flex; gap: 1rem; }
 
@@ -92,21 +94,16 @@
             aside { position: fixed; left: -260px; height: 100vh; transition: left 0.3s ease; }
             aside.active { left: 0; }
             .sidebar-overlay.active { display: block; }
-            
             main { padding: 1.5rem 1rem; }
             header { margin-bottom: 2rem; }
             .menu-toggle { display: block; }
             h1 { font-size: 1.25rem; }
-            
             .stats-grid { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
             .grid-2-col { grid-template-columns: 1fr !important; gap: 1.5rem; }
             .form-row { flex-direction: column; gap: 0; }
-            
             .card { padding: 1.25rem; }
             .modal { padding: 1.5rem; }
             .login-card { padding: 2rem 1.5rem; }
-            
-            /* Ensure modal buttons stack nicely on mobile */
             .modal-actions { flex-direction: column; }
             .btn-cancel { padding: 0.8rem; background: #f0f0f0; border-radius: var(--radius); }
         }
@@ -131,13 +128,16 @@
     
     <aside>
         <div class="logo">ELITES Admin</div>
-        <nav>
+        <nav style="display: flex; flex-direction: column; height: 100%;">
             <ul>
-                <li class="active" onclick="showView('analytics')">Dashboard</li>
-                <li onclick="showView('products')">Inventory</li>
-                <li onclick="showView('storefront')">Storefront UI</li>
-                <li onclick="showView('orders')">Orders</li>
-                <li onclick="showView('settings')">Settings</li>
+                <li class="active" onclick="showView('analytics', this)">Dashboard</li>
+                <li onclick="showView('products', this)">Inventory</li>
+                <li onclick="showView('storefront', this)">Storefront UI</li>
+                <li onclick="showView('orders', this)">Orders</li>
+                <li onclick="showView('settings', this)">Settings</li>
+            </ul>
+            <ul style="margin-top: auto;">
+                <li class="logout-btn" onclick="logoutAdmin()">Logout</li>
             </ul>
         </nav>
     </aside>
@@ -198,7 +198,7 @@
                         <div class="preview-grid" id="heroPreviewGrid"></div>
                     </div>
                 </div>
-                <button class="btn-add" onclick="saveStorefrontCMS()" style="padding: 1rem; font-size: 1rem;">Save Storefront Changes</button>
+                <button class="btn-add" id="saveCmsBtn" onclick="saveStorefrontCMS()" style="padding: 1rem; font-size: 1rem;">Save Storefront Changes</button>
             </div>
         </div>
 
@@ -225,7 +225,7 @@
                         <button class="btn-add" style="margin-top: 1rem; width: 100%;">Save Settings</button>
                     </div>
 
-                    <div class="card">
+                    <div class="card" id="registerAdminBlock">
                         <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Register New Admin</h3>
                         <form id="addAdminForm">
                             <div class="form-group"><label>Username</label><input type="text" id="newAdminUser" required></div>
@@ -263,13 +263,11 @@
             </div>
             
             <div class="grid-2-col" style="margin-bottom: 2rem;">
-                <!-- Customer Info -->
                 <div class="card" style="margin: 0; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
                     <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Customer Info</h4>
                     <p id="modalCustomerName" style="font-weight: 600; margin-bottom: 0.2rem; font-size: 1.05rem;"></p>
                     <p id="modalCustomerEmail" style="font-size: 0.9rem; color: var(--text-muted);"></p>
                 </div>
-                <!-- Shipping & Payment -->
                 <div class="card" style="margin: 0; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius);">
                     <h4 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1rem; letter-spacing: 1px;">Delivery Details</h4>
                     <p id="modalShippingAddress" style="font-size: 0.9rem; margin-bottom: 0.8rem; line-height: 1.4;"></p>
@@ -308,7 +306,7 @@
 
     <div id="modalOverlay">
         <div class="modal">
-            <h3>Add New Collection Item</h3>
+            <h3 id="productModalTitle">Add New Collection Item</h3>
             <form id="productForm">
                 <div class="form-group"><label>Product Name</label><input type="text" id="pName" required></div>
                 
@@ -373,55 +371,87 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn-add" style="flex: 1;">Save Product to Database</button>
+                    <button type="submit" id="saveProductBtn" class="btn-add" style="flex: 1;">Save Product to Database</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Firebase SDK (Modular Approach) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js";
 
-    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDnsilhjbCfdJvkqOohw_40F_xD_D97OQo",
+            authDomain: "formique-backend.firebaseapp.com",
+            projectId: "formique-backend",
+            storageBucket: "formique-backend.firebasestorage.app",
+            messagingSenderId: "1039018133322",
+            appId: "1:1039018133322:web:057c329ab797fee1c4e3b3",
+            measurementId: "G-NEBDNSBXYN"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Data Arrays
         let products = []; let orders = []; let adminAccounts = [];
         let storefrontData = { announcement_text: "", announcement_active: false, hero_title: "", hero_sub: "", hero_btn: "", hero_image_url: "" };
         
         let selectedSizes = []; 
         let selectedColors = []; 
-        let currentThumbnail = ""; 
+        let currentThumbnail = null; 
         let currentGallery = [];
         let heroImages = [];
         let editingIndex = -1;
+        let activeSession = null; 
 
-        const supabaseUrl = 'https://mckfmkzcrpwnypxgqsuj.supabase.co'; 
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ja2Zta3pjcnB3bnlweGdxc3VqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0OTUyOTYsImV4cCI6MjA5MjA3MTI5Nn0.pRc3Bf8pPu3JDIkMdXjbILVUHYn7Z34OqRxjnnjxigE'; 
-        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // Check Local Storage for active session
+        window.onload = () => {
+            const storedSession = localStorage.getItem('elitesAdminSession');
+            if (storedSession) {
+                activeSession = JSON.parse(storedSession);
+                document.getElementById('loginOverlay').style.display = 'none';
+                fetchAllData();
+            }
+        };
 
-        /* --- MOBILE SIDEBAR LOGIC --- */
-        function toggleSidebar() {
-            document.querySelector('aside').classList.toggle('active');
-            document.querySelector('.sidebar-overlay').classList.toggle('active');
-        }
-
+        // --- LOGIN LOGIC ---
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault(); 
             const user = document.getElementById('loginUser').value;
             const pass = document.getElementById('loginPass').value;
-            
             const loginBtn = document.getElementById('loginBtn');
+            
             loginBtn.innerText = "Checking...";
             document.getElementById('loginError').style.display = 'none';
 
             let isAuthorized = false;
-            if (user === "Jarek_Melgar" && pass === "password123") isAuthorized = true;
+            let role = "Manager"; 
 
-            if (!isAuthorized) {
+            if (user === "Jarek_Melgar" && pass === "password123") {
+                isAuthorized = true;
+                role = "Super Admin";
+            } else {
                 try {
-                    const { data } = await window.supabaseClient.from('admins').select('*').eq('username', user).eq('password', pass);
-                    if (data && data.length > 0) isAuthorized = true;
-                } catch(err) {}
+                    // Firebase Firestore Query
+                    const q = query(collection(db, "admins"), where("username", "==", user), where("password", "==", pass));
+                    const querySnapshot = await getDocs(q);
+                    if (!querySnapshot.empty) {
+                        isAuthorized = true;
+                        role = querySnapshot.docs[0].data().role;
+                    }
+                } catch(err) {
+                    console.error("Login Check Error:", err);
+                }
             }
 
             if (isAuthorized) {
+                activeSession = { username: user, role: role };
+                localStorage.setItem('elitesAdminSession', JSON.stringify(activeSession));
                 document.getElementById('loginOverlay').style.display = 'none';
                 loginBtn.innerText = "Sign In";
                 fetchAllData();
@@ -431,26 +461,34 @@
             }
         });
 
+        // --- FETCH DATA FROM FIRESTORE ---
         async function fetchAllData() {
-            document.getElementById('system-status').innerText = "Connecting to Supabase Cloud...";
+            document.getElementById('system-status').innerText = "Connecting to Firebase...";
             try {
-                const [prodRes, ordRes, adminRes, cmsRes] = await Promise.all([
-                    window.supabaseClient.from('products').select('*').order('id', { ascending: false }),
-                    window.supabaseClient.from('orders').select('*').order('created_at', { ascending: false }),
-                    window.supabaseClient.from('admins').select('*'),
-                    window.supabaseClient.from('cms').select('*').eq('id', 1).single() 
-                ]);
+                // Fetch Products
+                const prodSnap = await getDocs(collection(db, "products"));
+                products = prodSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.created_at || 0) - (a.created_at || 0));
 
-                if (prodRes.data) products = prodRes.data;
-                if (ordRes.data) orders = ordRes.data;
-                if (adminRes.data) adminAccounts = adminRes.data;
-                if (cmsRes.data) storefrontData = cmsRes.data;
+                // Fetch Orders
+                const ordSnap = await getDocs(collection(db, "orders"));
+                orders = ordSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.created_at || 0) - (a.created_at || 0));
 
+                // Fetch Admins
+                const adminSnap = await getDocs(collection(db, "admins"));
+                adminAccounts = adminSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                // Fetch CMS
+                const cmsDoc = await getDoc(doc(db, "cms", "storefront"));
+                if (cmsDoc.exists()) {
+                    storefrontData = cmsDoc.data();
+                }
+
+                // Ensure primary admin exists in local array
                 if (!adminAccounts.find(a => a.username === "Jarek_Melgar")) {
                     adminAccounts.unshift({ username: "Jarek_Melgar", role: "Super Admin" });
                 }
 
-                document.getElementById('system-status').innerText = "System Live: Supabase Connected 🟢";
+                document.getElementById('system-status').innerText = "System Live: Firebase Connected 🟢";
                 document.getElementById('system-status').style.color = "#27ae60";
 
                 updateDashboardStats();
@@ -459,12 +497,32 @@
                 renderAdmins();
                 loadStorefrontCMS(); 
             } catch (error) { 
-                console.error(error);
+                console.error("Critical Fetch Error:", error);
                 document.getElementById('system-status').innerText = "Connection Failed. Check Console.";
                 document.getElementById('system-status').style.color = "red";
             }
         }
 
+        // --- CLOUD STORAGE UPLOAD HELPER ---
+        async function uploadToStorage(item) {
+            if (typeof item === 'string') return item; 
+            if (!item) return null;
+
+            const ext = item.name.split('.').pop();
+            const fileName = `images/${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+            const storageRef = ref(storage, fileName);
+            
+            try {
+                await uploadBytes(storageRef, item);
+                const url = await getDownloadURL(storageRef);
+                return url;
+            } catch (error) {
+                console.error("Firebase Storage Error:", error);
+                return null;
+            }
+        }
+
+        /* --- DASHBOARD & ORDERS LOGIC --- */
         function updateDashboardStats() {
             const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total_price || 0), 0);
             document.getElementById('stat-orders').innerText = orders.length;
@@ -493,11 +551,11 @@
                 const orderDate = order.created_at ? new Date(order.created_at).toLocaleDateString() : 'N/A';
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight: 600;">${order.id.substring(0,8).toUpperCase()}</td>
+                    <td style="font-weight: 600;">${order.id?.substring(0,8).toUpperCase() || 'N/A'}</td>
                     <td>${order.customer_name}<br><small>${order.customer_email}</small></td>
                     <td>${itemsListHTML}</td>
                     <td>${orderDate}</td>
-                    <td style="font-weight: 600;">₱${parseFloat(order.total_price).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                    <td style="font-weight: 600;">₱${parseFloat(order.total_price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                     <td><span style="background: ${badgeBg}; color: ${badgeColor}; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">${order.status.toUpperCase()}</span></td>
                     <td style="display: flex; gap: 0.5rem; align-items: center;">
                         <button onclick="openOrderDetails(${index})" style="background: var(--accent); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">View</button>
@@ -513,9 +571,9 @@
             });
         }
 
-        function openOrderDetails(index) {
+        window.openOrderDetails = function(index) {
             const order = orders[index];
-            document.getElementById('modalOrderId').innerText = `Order #${order.id.substring(0,8).toUpperCase()}`;
+            document.getElementById('modalOrderId').innerText = `Order #${order.id?.substring(0,8).toUpperCase() || 'N/A'}`;
             document.getElementById('modalCustomerName').innerText = order.customer_name || 'Name not provided';
             document.getElementById('modalCustomerEmail').innerText = order.customer_email || 'Email not provided';
             document.getElementById('modalShippingAddress').innerText = order.customer_address || order.shipping_address || 'Address not provided';
@@ -545,20 +603,43 @@
             document.getElementById('orderModalOverlay').style.display = 'flex';
         }
 
-        function closeOrderModal() { document.getElementById('orderModalOverlay').style.display = 'none'; }
+        window.closeOrderModal = function() { document.getElementById('orderModalOverlay').style.display = 'none'; }
 
-        async function updateOrderStatus(index, newStatus) { 
+        window.updateOrderStatus = async function(index, newStatus) { 
             orders[index].status = newStatus; 
             renderOrders(); 
             updateDashboardStats();
-            try { await window.supabaseClient.from('orders').update({status: newStatus}).eq('id', orders[index].id); } catch(e) {}
+            
+            try {
+                await updateDoc(doc(db, "orders", orders[index].id), { status: newStatus });
+            } catch(error) {
+                console.error("Firestore Update Error:", error);
+                alert("Failed to update the status in the database!");
+            }
         }
 
+        /* --- ADMIN ACCOUNTS LOGIC --- */
         function renderAdmins() {
             const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '';
+            
+            if (activeSession && activeSession.role !== 'Super Admin') {
+                document.getElementById('registerAdminBlock').style.display = 'none';
+            } else {
+                document.getElementById('registerAdminBlock').style.display = 'block';
+            }
+
             adminAccounts.forEach((admin, index) => {
                 const tr = document.createElement('tr');
-                const deleteBtn = (admin.username === "Jarek_Melgar") ? `<span style="color: var(--text-muted); font-size: 0.8rem;">Primary</span>` : `<button onclick="removeAdmin(${index})" style="background: none; border: none; color: red; cursor: pointer; font-size: 0.85rem;">Revoke</button>`;
+                let deleteBtn = '';
+                
+                if (admin.username === "Jarek_Melgar") {
+                    deleteBtn = `<span style="color: var(--text-muted); font-size: 0.8rem;">Primary</span>`;
+                } else if (activeSession && activeSession.role === 'Super Admin') {
+                    deleteBtn = `<button onclick="removeAdmin(${index})" style="background: none; border: none; color: red; cursor: pointer; font-size: 0.85rem;">Revoke</button>`;
+                } else {
+                    deleteBtn = `<span style="color: var(--text-muted); font-size: 0.8rem;">No Access</span>`;
+                }
+
                 tr.innerHTML = `<td style="font-weight: 600; padding-left: 0;">${admin.username}</td><td><span style="background: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">${admin.role}</span></td><td style="text-align: right; padding-right: 0;">${deleteBtn}</td>`;
                 tbody.appendChild(tr);
             });
@@ -566,49 +647,65 @@
 
         document.getElementById('addAdminForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const newAdmin = { username: document.getElementById('newAdminUser').value, password: document.getElementById('newAdminPass').value, role: document.getElementById('newAdminRole').value };
+            const newAdmin = { 
+                username: document.getElementById('newAdminUser').value, 
+                password: document.getElementById('newAdminPass').value, 
+                role: document.getElementById('newAdminRole').value 
+            };
             if(adminAccounts.some(a => a.username === newAdmin.username)) return alert("Username exists!");
-            try { await window.supabaseClient.from('admins').insert([newAdmin]); } catch(e) {}
-            adminAccounts.push(newAdmin); document.getElementById('addAdminForm').reset(); renderAdmins();
+            
+            try { 
+                await setDoc(doc(db, "admins", newAdmin.username), newAdmin); 
+                newAdmin.id = newAdmin.username;
+                adminAccounts.push(newAdmin); 
+                document.getElementById('addAdminForm').reset(); 
+                renderAdmins();
+            } catch(e) { console.error(e); alert("Failed to add admin"); }
         });
 
-        async function removeAdmin(index) {
+        window.removeAdmin = async function(index) {
             if(confirm("Revoke access for this admin?")) {
-                try { await window.supabaseClient.from('admins').delete().eq('username', adminAccounts[index].username); } catch(e){}
-                adminAccounts.splice(index, 1); renderAdmins();
+                try { 
+                    await deleteDoc(doc(db, "admins", adminAccounts[index].id)); 
+                    adminAccounts.splice(index, 1); 
+                    renderAdmins();
+                } catch(e){ console.error(e); }
             }
         }
 
-        function previewThumb(input) {
+        /* --- PRODUCT IMAGE PREVIEWS --- */
+        window.previewThumb = function(input) {
             if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => { currentThumbnail = e.target.result; renderThumbPreview(); };
-                reader.readAsDataURL(input.files[0]);
+                currentThumbnail = input.files[0];
+                renderThumbPreview();
             }
         }
         function renderThumbPreview() {
             const container = document.getElementById('thumbPreview');
             if(!currentThumbnail) { container.innerHTML = ''; return; }
-            container.innerHTML = `<div class="img-wrap"><img src="${currentThumbnail}" class="preview-item"><button type="button" class="btn-delete-img" onclick="removeThumb()">×</button></div>`;
+            const src = typeof currentThumbnail === 'string' ? currentThumbnail : URL.createObjectURL(currentThumbnail);
+            container.innerHTML = `<div class="img-wrap"><img src="${src}" class="preview-item"><button type="button" class="btn-delete-img" onclick="removeThumb()">×</button></div>`;
         }
-        function removeThumb() { currentThumbnail = ""; renderThumbPreview(); }
+        window.removeThumb = function() { currentThumbnail = null; renderThumbPreview(); }
 
-        function previewGallery(input) {
+        window.previewGallery = function(input) {
             if (input.files) {
                 Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => { currentGallery.push(e.target.result); renderGalleryPreview(); };
-                    reader.readAsDataURL(file);
+                    currentGallery.push(file);
                 });
+                renderGalleryPreview();
             }
         }
         function renderGalleryPreview() {
             const container = document.getElementById('galleryPreview');
-            container.innerHTML = currentGallery.map((src, i) => `<div class="img-wrap"><img src="${src}" class="preview-item"><button type="button" class="btn-delete-img" onclick="removeGalleryImg(${i})">×</button></div>`).join('');
+            container.innerHTML = currentGallery.map((item, i) => {
+                const src = typeof item === 'string' ? item : URL.createObjectURL(item);
+                return `<div class="img-wrap"><img src="${src}" class="preview-item"><button type="button" class="btn-delete-img" onclick="removeGalleryImg(${i})">×</button></div>`;
+            }).join('');
         }
-        function removeGalleryImg(i) { currentGallery.splice(i, 1); renderGalleryPreview(); }
+        window.removeGalleryImg = function(i) { currentGallery.splice(i, 1); renderGalleryPreview(); }
 
-        function addCustomColor() {
+        window.addCustomColor = function() {
             const hex = document.getElementById('customColorHex').value;
             let name = document.getElementById('customColorName').value.trim();
             if(!name) name = hex; 
@@ -627,10 +724,18 @@
                 </div>
             `).join('');
         }
-        function removeColor(i) { selectedColors.splice(i, 1); renderColors(); }
+        window.removeColor = function(i) { selectedColors.splice(i, 1); renderColors(); }
 
-        function toggleChip(el, size) { el.classList.toggle('selected'); if (selectedSizes.includes(size)) { selectedSizes = selectedSizes.filter(s => s !== size); } else { selectedSizes.push(size); } }
+        window.toggleChip = function(el, size) { 
+            el.classList.toggle('selected'); 
+            if (selectedSizes.includes(size)) { 
+                selectedSizes = selectedSizes.filter(s => s !== size); 
+            } else { 
+                selectedSizes.push(size); 
+            } 
+        }
 
+        /* --- STOREFRONT CMS LOGIC --- */
         function loadStorefrontCMS() {
             document.getElementById('cmsAnnounceText').value = storefrontData.announcement_text || "";
             document.getElementById('cmsAnnounceActive').checked = storefrontData.announcement_active || false;
@@ -646,61 +751,87 @@
             renderHeroImages();
         }
 
-        function addHeroImages(input) {
+        window.addHeroImages = function(input) {
             if (input.files) {
                 Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => { heroImages.push(e.target.result); renderHeroImages(); }
-                    reader.readAsDataURL(file);
+                    heroImages.push(file); 
                 });
+                renderHeroImages();
             }
         }
 
         function renderHeroImages() {
             const container = document.getElementById('heroPreviewGrid');
-            container.innerHTML = heroImages.map((src, i) => `
+            container.innerHTML = heroImages.map((item, i) => {
+                const src = typeof item === 'string' ? item : URL.createObjectURL(item);
+                return `
                 <div class="img-wrap" style="width: 100px; height: 100px;">
                     <img src="${src}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
                     <button type="button" class="btn-delete-img" onclick="removeHeroImage(${i})">×</button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
-        function removeHeroImage(i) { heroImages.splice(i, 1); renderHeroImages(); }
+        window.removeHeroImage = function(i) { heroImages.splice(i, 1); renderHeroImages(); }
 
-        async function saveStorefrontCMS() {
+        window.saveStorefrontCMS = async function() {
+            const btn = document.getElementById('saveCmsBtn');
+            btn.innerText = "Uploading Images...";
+            btn.disabled = true;
+
+            const finalHeroUrls = [];
+            for (let item of heroImages) {
+                const url = await uploadToStorage(item);
+                if (url) finalHeroUrls.push(url);
+            }
+
             const cmsData = {
                 announcement_text: document.getElementById('cmsAnnounceText').value,
                 announcement_active: document.getElementById('cmsAnnounceActive').checked,
                 hero_title: document.getElementById('cmsHeroTitle').value,
                 hero_sub: document.getElementById('cmsHeroSub').value,
                 hero_btn: document.getElementById('cmsHeroBtn').value,
-                hero_image_url: JSON.stringify(heroImages) 
+                hero_image_url: JSON.stringify(finalHeroUrls) 
             };
+
             try {
-                await window.supabaseClient.from('cms').update(cmsData).eq('id', 1);
+                await setDoc(doc(db, "cms", "storefront"), cmsData);
                 alert("Storefront Updated Live!");
-            } catch(e) { alert("Error saving CMS data."); }
+            } catch(e) { 
+                console.error(e);
+                alert("Error saving CMS data."); 
+            } finally {
+                btn.innerText = "Save Storefront Changes";
+                btn.disabled = false;
+            }
         }
 
+        /* --- PRODUCT CRUD LOGIC --- */
         async function saveProductToDB(productData) {
             try {
                 if (editingIndex === -1) { 
-                    const { data } = await window.supabaseClient.from('products').insert([productData]).select();
-                    if (data) products.unshift(data[0]); 
+                    productData.created_at = Date.now(); // Sort tracking
+                    const docRef = await addDoc(collection(db, "products"), productData);
+                    productData.id = docRef.id;
+                    products.unshift(productData); 
                 } else { 
                     const targetId = products[editingIndex].id;
-                    await window.supabaseClient.from('products').update(productData).eq('id', targetId);
+                    await updateDoc(doc(db, "products", targetId), productData);
                     products[editingIndex] = { ...products[editingIndex], ...productData };
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("Save product error:", e);
+            }
             renderProducts();
         }
 
-        async function deleteProduct(index) { 
+        window.deleteProduct = async function(index) { 
             if(confirm("Delete this product permanently?")) { 
-                try { await window.supabaseClient.from('products').delete().eq('id', products[index].id); } catch(e) {}
-                products.splice(index, 1); renderProducts(); 
+                try { 
+                    await deleteDoc(doc(db, "products", products[index].id)); 
+                    products.splice(index, 1); 
+                    renderProducts(); 
+                } catch(e) { console.error(e); }
             } 
         }
 
@@ -717,7 +848,7 @@
             });
         }
 
-        function editProduct(index) {
+        window.editProduct = function(index) {
             editingIndex = index; const p = products[index];
             document.getElementById('pName').value = p.name; 
             document.getElementById('pPrice').value = p.price; 
@@ -734,43 +865,76 @@
             selectedColors = (p.colors || []).map(c => typeof c === 'string' ? { name: c, hex: '#000000' } : c);
             renderColors();
 
-            currentThumbnail = p.thumbnail || ""; renderThumbPreview();
+            currentThumbnail = p.thumbnail || null; renderThumbPreview();
             currentGallery = p.gallery ? [...p.gallery] : []; renderGalleryPreview();
             
             openModal();
         }
 
-        document.getElementById('productForm').addEventListener('submit', (e) => {
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('saveProductBtn');
+            btn.innerText = "Uploading Images...";
+            btn.disabled = true;
+
+            const finalThumbUrl = await uploadToStorage(currentThumbnail);
+            
+            const finalGalleryUrls = [];
+            for (let item of currentGallery) {
+                const url = await uploadToStorage(item);
+                if (url) finalGalleryUrls.push(url);
+            }
+
             const productData = {
                 name: document.getElementById('pName').value, price: document.getElementById('pPrice').value,
                 stock: document.getElementById('pStock').value, category: document.getElementById('pCategory').value,
                 description: document.getElementById('pDesc').value, sizes: selectedSizes, colors: selectedColors, 
-                thumbnail: currentThumbnail, gallery: currentGallery
+                thumbnail: finalThumbUrl, gallery: finalGalleryUrls
             };
-            saveProductToDB(productData); closeModal();
+            
+            await saveProductToDB(productData); 
+            
+            btn.innerText = "Save Product to Database";
+            btn.disabled = false;
+            closeModal();
         });
 
+        // --- UI TOGGLES ---
         const modal = document.getElementById('modalOverlay');
-        function openModal() { modal.style.display = 'flex'; document.querySelector('.modal h3').innerText = editingIndex === -1 ? "Add New Item" : "Edit Product"; }
-        function closeModal() { 
+        
+        window.openModal = function() { 
+            modal.style.display = 'flex'; 
+            document.getElementById('productModalTitle').innerText = editingIndex === -1 ? "Add New Collection Item" : "Edit Product Details"; 
+        }
+        
+        window.closeModal = function() { 
             modal.style.display = 'none'; document.getElementById('productForm').reset(); 
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-            selectedSizes = []; selectedColors = []; currentThumbnail = ""; currentGallery = []; editingIndex = -1;
+            selectedSizes = []; selectedColors = []; currentThumbnail = null; currentGallery = []; editingIndex = -1;
             renderThumbPreview(); renderGalleryPreview(); renderColors();
         }
-        function showView(viewId) { 
+
+        window.toggleSidebar = function() {
+            document.querySelector('aside').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
+        window.showView = function(viewId, element) { 
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); 
             document.querySelectorAll('nav li').forEach(li => li.classList.remove('active')); 
             document.getElementById(viewId).classList.add('active'); 
-            event.currentTarget.classList.add('active'); 
+            if(element) element.classList.add('active'); 
             document.getElementById('viewTitle').innerText = viewId.charAt(0).toUpperCase() + viewId.slice(1); 
             
-            // Auto-close sidebar on mobile after clicking a link
             if (window.innerWidth <= 768) {
                 document.querySelector('aside').classList.remove('active');
                 document.querySelector('.sidebar-overlay').classList.remove('active');
             }
+        }
+
+        window.logoutAdmin = function() {
+            localStorage.removeItem('elitesAdminSession');
+            window.location.reload();
         }
     </script>
 </body>
