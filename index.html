@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELITES | Admin Dashboard</title>
+    <title>Formique | Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -114,7 +114,7 @@
     <div id="loginOverlay">
         <div class="login-card">
             <h2 style="margin-bottom: 0.5rem; font-weight: 600;">Welcome Back</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Sign in to ELITES Admin</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Sign in Formique Admin</p>
             <form id="loginForm">
                 <div class="form-group"><label>Username</label><input type="text" id="loginUser" required placeholder="Enter username"></div>
                 <div class="form-group"><label>Password</label><input type="password" id="loginPass" required placeholder="Enter password"></div>
@@ -127,7 +127,7 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     
     <aside>
-        <div class="logo">ELITES Admin</div>
+        <div class="logo">Formique Admin</div>
         <nav style="display: flex; flex-direction: column; height: 100%;">
             <ul>
                 <li class="active" onclick="showView('analytics', this)">Dashboard</li>
@@ -219,8 +219,8 @@
                 <div>
                     <div class="card">
                         <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Store Profile</h3>
-                        <div class="form-group"><label>Store Name</label><input type="text" value="The ELITES Official Store"></div>
-                        <div class="form-group"><label>Support Email</label><input type="text" value="support@theelites.com"></div>
+                        <div class="form-group"><label>Store Name</label><input type="text" value="The Formique Official Store"></div>
+                        <div class="form-group"><label>Support Email</label><input type="text" value="formiquestore@gmail.com"></div>
                         <div class="form-group"><label>Default Currency</label><select><option>PHP (₱)</option><option>USD ($)</option></select></div>
                         <button class="btn-add" style="margin-top: 1rem; width: 100%;">Save Settings</button>
                     </div>
@@ -381,7 +381,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDnsilhjbCfdJvkqOohw_40F_xD_D97OQo",
@@ -395,7 +394,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
         // Data Arrays
         let products = []; let orders = []; let adminAccounts = [];
